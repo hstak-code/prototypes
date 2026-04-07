@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MUSINSA STANDARD — B2B Partner Portal</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #f5f5f5; color: #111; font-size: 13px; }
+
+  /* ── HEADER ── */
+  .header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: #fff; border-bottom: 1px solid #e0e0e0;
+  }
+  .header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 32px;
+  }
+  .logo { font-size: 15px; font-weight: 700; letter-spacing: 1px; }
+  .summary-bar {
+    display: flex; align-items: center; gap: 24px; font-size: 12px; color: #555;
+  }
+  .summary-bar span strong { color: #111; }
+  .btn-order {
+    background: #111; color: #fff; border: none; padding: 8px 20px;
+    font-size: 12px; font-weight: 600; letter-spacing: 1px; cursor: pointer;
+  }
+  .btn-order:hover { background: #333; }
+  .btn-mypage {
+    background: #fff; color: #111; border: 1px solid #ddd; padding: 8px 16px;
+    font-size: 12px; font-weight: 600; letter-spacing: 1px; cursor: pointer;
+  }
+  .btn-mypage:hover { border-color: #111; }
+  .header-account {
+    display: flex; align-items: center; gap: 12px;
+    padding-left: 16px; border-left: 1px solid #e0e0e0;
+  }
+  .account-id { font-size: 12px; color: #555; font-weight: 600; }
+  .btn-logout {
+    background: none; border: none; font-size: 11px; color: #aaa;
+    cursor: pointer; letter-spacing: 0.5px; padding: 0;
+  }
+  .btn-logout:hover { color: #111; }
+  .header-nav {
+    display: flex; align-items: center; gap: 0; padding: 0 32px;
+    border-top: 1px solid #f0f0f0;
+  }
+  .nav-tab {
+    padding: 10px 18px; font-size: 12px; cursor: pointer; color: #888;
+    border-bottom: 2px solid transparent; transition: all 0.2s;
+  }
+  .nav-tab.active { color: #111; border-bottom-color: #111; font-weight: 600; }
+  .nav-tab:hover { color: #111; }
+  .search-box {
+    margin-left: auto; display: flex; align-items: center; gap: 8px; padding-bottom: 8px;
+  }
+  .search-box input {
+    border: 1px solid #ddd; padding: 6px 12px; font-size: 12px; width: 200px; outline: none;
+  }
+
+  /* ── LOGIN ── */
+  .login-page {
+    display: none; position: fixed; inset: 0; z-index: 400;
+    background: #fff; flex-direction: row;
+  }
+  .login-page.active { display: flex; }
+  .login-left {
+    flex: 1; background: #111; display: flex; flex-direction: column;
+    justify-content: space-between; padding: 48px;
+  }
+  .login-left-logo { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: 2px; }
+  .login-left-logo span { display: block; font-size: 11px; font-weight: 400; color: #888; letter-spacing: 3px; margin-top: 6px; }
+  .login-left-headline {
+    color: #fff;
+  }
+  .login-left-headline h1 {
+    font-size: 36px; font-weight: 800; line-height: 1.2; letter-spacing: -0.5px; margin-bottom: 16px;
+  }
+  .login-left-headline h1 em { color: #888; font-style: normal; }
+  .login-left-headline p { font-size: 13px; color: #777; line-height: 1.7; max-width: 340px; }
+  .login-left-footer { font-size: 11px; color: #444; }
+  .login-right {
+    width: 480px; flex-shrink: 0; display: flex; flex-direction: column;
+    justify-content: center; padding: 64px 56px;
+  }
+  .login-right-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.3px; }
+  .login-right-sub { font-size: 13px; color: #888; margin-bottom: 40px; }
+  .login-field { margin-bottom: 16px; }
+  .login-field label { display: block; font-size: 11px; font-weight: 700; color: #555; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+  .login-field input {
+    width: 100%; border: 1px solid #e0e0e0; padding: 14px 16px;
+    font-size: 14px; outline: none; transition: border-color 0.2s; background: #fafafa;
+  }
+  .login-field input:focus { border-color: #111; background: #fff; }
+  .login-error { font-size: 12px; color: #e53e3e; margin-bottom: 16px; display: none; }
+  .login-error.show { display: block; }
+  .btn-login {
+    width: 100%; background: #111; color: #fff; border: none;
+    padding: 16px; font-size: 14px; font-weight: 700; letter-spacing: 1px;
+    cursor: pointer; margin-top: 8px; transition: background 0.2s;
+  }
+  .btn-login:hover { background: #333; }
+  .login-divider { border: none; border-top: 1px solid #f0f0f0; margin: 32px 0; }
+  .login-contact { font-size: 12px; color: #aaa; text-align: center; }
+  .login-contact a { color: #111; text-decoration: none; font-weight: 600; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; padding-top: 100px; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ── SCREEN 1: PRODUCT LIST ── */
+  .product-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: #e0e0e0; margin: 24px 32px;
+  }
+  .product-card {
+    background: #fff; cursor: pointer; transition: opacity 0.2s; position: relative;
+  }
+  .product-card:hover { opacity: 0.85; }
+  .product-card .img-wrap {
+    background: #fff; aspect-ratio: 3/4; overflow: hidden; position: relative;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .product-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .carry-over-tag {
+    position: absolute; top: 10px; left: 10px;
+    background: #111; color: #fff; font-size: 9px; padding: 2px 6px; letter-spacing: 1px;
+  }
+  .in-cart-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: #2563eb; color: #fff; font-size: 9px; padding: 2px 6px;
+  }
+  .product-card .card-info { padding: 12px; }
+  .card-info .product-name { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+  .card-info .style-no { color: #888; font-size: 11px; margin-bottom: 2px; }
+  .card-info .color { color: #555; font-size: 11px; margin-bottom: 2px; }
+  .card-info .material { color: #888; font-size: 10px; margin-bottom: 8px; }
+  .card-info .price-row { display: flex; gap: 8px; align-items: baseline; }
+  .price-usd { font-weight: 700; font-size: 13px; }
+  .price-krw { color: #888; font-size: 11px; }
+  .card-actions { display: flex; align-items: center; gap: 8px; padding: 8px 12px 12px; }
+  .btn-remove {
+    background: #fff; border: 1px solid #ddd; padding: 5px 10px;
+    font-size: 11px; cursor: pointer; color: #555;
+  }
+  .btn-remove:hover { border-color: #111; color: #111; }
+  .qty-display { font-size: 11px; color: #2563eb; font-weight: 600; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; width: 860px; max-height: 90vh; overflow-y: auto;
+    display: flex; position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px; background: none; border: none;
+    font-size: 20px; cursor: pointer; color: #555; z-index: 10;
+  }
+  .modal-images { width: 420px; flex-shrink: 0; background: #fff; padding: 24px; border-right: 1px solid #f0f0f0; }
+  .modal-main-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; margin-bottom: 12px; }
+  .modal-thumbs { display: flex; gap: 8px; }
+  .modal-thumbs img {
+    width: 64px; height: 80px; object-fit: cover; cursor: pointer;
+    border: 2px solid transparent; opacity: 0.7;
+  }
+  .modal-thumbs img.active { border-color: #111; opacity: 1; }
+  .modal-info { flex: 1; padding: 32px 28px; }
+  .modal-product-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .modal-style-no { color: #888; font-size: 12px; margin-bottom: 20px; }
+  .modal-divider { border: none; border-top: 1px solid #eee; margin: 16px 0; }
+  .modal-prices { margin-bottom: 16px; }
+  .modal-price-usd { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .modal-price-krw { font-size: 13px; color: #888; }
+  .modal-price-note { font-size: 10px; color: #2563eb; margin-top: 4px; }
+  .info-row { display: flex; gap: 0; margin-bottom: 8px; font-size: 12px; }
+  .info-label { width: 120px; color: #888; flex-shrink: 0; }
+  .info-value { color: #111; font-weight: 500; }
+  .size-table { margin: 16px 0; }
+  .size-table-title { font-size: 11px; font-weight: 600; margin-bottom: 8px; color: #555; letter-spacing: 0.5px; }
+  .size-hint { font-size: 10px; color: #e53e3e; margin-bottom: 8px; }
+  .size-inputs { display: flex; gap: 12px; margin-bottom: 12px; }
+  .size-input-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .size-label-badge {
+    background: #111; color: #fff; font-size: 10px; width: 28px; height: 20px;
+    display: flex; align-items: center; justify-content: center; font-weight: 600;
+  }
+  .size-input-group input {
+    width: 60px; border: 1px solid #ddd; padding: 6px; text-align: center;
+    font-size: 13px; outline: none;
+  }
+  .size-input-group input:focus { border-color: #111; }
+  .modal-totals { display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid #eee; margin-bottom: 16px; }
+  .total-item { text-align: right; }
+  .total-label { font-size: 11px; color: #888; margin-bottom: 2px; }
+  .total-value { font-size: 14px; font-weight: 700; }
+  .btn-add-to-selection {
+    width: 100%; background: #111; color: #fff; border: none; padding: 14px;
+    font-size: 13px; font-weight: 600; letter-spacing: 1px; cursor: pointer;
+  }
+  .btn-add-to-selection:hover { background: #333; }
+
+  /* ── SCREEN 3: CART ── */
+  .cart-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: #e0e0e0; margin: 24px 32px;
+  }
+  .cart-card { background: #fff; }
+  .cart-card .img-wrap { background: #f8f8f8; aspect-ratio: 3/4; overflow: hidden; position: relative; }
+  .cart-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .cart-card-info { padding: 12px; }
+  .cart-card-info .product-name { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+  .cart-card-info .style-no { color: #888; font-size: 11px; margin-bottom: 2px; }
+  .cart-card-info .color { color: #555; font-size: 11px; margin-bottom: 2px; }
+  .cart-card-info .material { color: #888; font-size: 10px; }
+  .cart-card-footer {
+    background: #111; color: #fff; padding: 10px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .btn-cart-remove {
+    background: none; border: 1px solid #555; color: #ccc; padding: 4px 10px;
+    font-size: 10px; cursor: pointer; letter-spacing: 0.5px;
+  }
+  .btn-cart-remove:hover { border-color: #fff; color: #fff; }
+  .cart-qty-info { font-size: 11px; color: #ccc; }
+  .cart-qty-info strong { color: #fff; }
+
+  /* ── SCREEN 4: ORDER CONFIRM ── */
+  .order-confirm-wrap { margin: 24px 32px; }
+  .order-confirm-title { font-size: 14px; font-weight: 700; margin-bottom: 20px; letter-spacing: 0.5px; }
+  .confirm-item { background: #fff; border: 1px solid #e0e0e0; margin-bottom: 1px; }
+  .confirm-item-inner { display: flex; align-items: flex-start; padding: 20px; gap: 20px; }
+  .confirm-item-img { width: 100px; height: 130px; object-fit: cover; flex-shrink: 0; background: #f8f8f8; }
+  .confirm-item-meta { flex: 1; }
+  .confirm-item-meta .product-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .confirm-item-meta .style-no { font-size: 11px; color: #888; margin-bottom: 2px; }
+  .confirm-item-meta .color { font-size: 11px; color: #555; margin-bottom: 2px; }
+  .confirm-item-meta .category { font-size: 11px; color: #888; }
+  .confirm-size-inputs { display: flex; gap: 24px; align-items: flex-start; }
+  .confirm-size-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .confirm-size-label { font-size: 10px; font-weight: 600; color: #888; }
+  .confirm-size-input {
+    width: 70px; border: 1px solid #ddd; padding: 6px; text-align: center;
+    font-size: 14px; font-weight: 600; outline: none;
+  }
+  .confirm-size-input:focus { border-color: #111; }
+  .confirm-item-totals { text-align: right; min-width: 140px; }
+  .confirm-total-row { margin-bottom: 8px; }
+  .confirm-total-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .confirm-total-value { font-size: 14px; font-weight: 700; }
+  .order-final-summary {
+    background: #111; color: #fff; padding: 20px 32px;
+    display: flex; align-items: center; justify-content: space-between; margin: 0 32px 32px;
+  }
+  .final-summary-items { display: flex; gap: 40px; }
+  .final-summary-item { }
+  .final-summary-label { font-size: 10px; color: #999; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .final-summary-value { font-size: 16px; font-weight: 700; }
+  .btn-submit-order {
+    background: #fff; color: #111; border: none; padding: 12px 32px;
+    font-size: 13px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
+  }
+  .btn-submit-order:hover { background: #eee; }
+
+  /* ── SUCCESS ── */
+  .success-screen {
+    display: none; position: fixed; inset: 0; background: #fff; z-index: 300;
+    flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  }
+  .success-screen.open { display: flex; }
+  .success-icon { font-size: 48px; }
+  .success-title { font-size: 20px; font-weight: 700; }
+  .success-po { font-size: 14px; color: #555; }
+  .btn-back-home {
+    margin-top: 16px; background: #111; color: #fff; border: none;
+    padding: 12px 32px; font-size: 13px; cursor: pointer; font-weight: 600;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-cart { text-align: center; padding: 80px 32px; color: #aaa; }
+  .empty-cart p { font-size: 14px; margin-bottom: 16px; }
+  .btn-back-list {
+    background: #111; color: #fff; border: none; padding: 10px 24px;
+    font-size: 12px; cursor: pointer; font-weight: 600;
+  }
+
+  /* ── SCREEN 5: MY PAGE ── */
+  .mypage-wrap { margin: 24px 32px 48px; }
+  .mypage-title { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .mypage-subtitle { font-size: 12px; color: #888; margin-bottom: 24px; }
+  .po-card { background: #fff; border: 1px solid #e0e0e0; margin-bottom: 12px; overflow: hidden; }
+  .po-card-header {
+    display: flex; align-items: center; padding: 18px 20px; cursor: pointer;
+    gap: 20px; border-bottom: 1px solid transparent; transition: background 0.15s;
+  }
+  .po-card-header:hover { background: #fafafa; }
+  .po-card-header.open { border-bottom-color: #eee; }
+  .po-no { font-size: 13px; font-weight: 700; min-width: 160px; }
+  .po-date { font-size: 12px; color: #888; min-width: 100px; }
+  .po-styles { font-size: 12px; color: #555; min-width: 80px; }
+  .po-amount { font-size: 13px; font-weight: 700; min-width: 100px; }
+  .po-status-pill {
+    padding: 4px 12px; border-radius: 2px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.5px; white-space: nowrap;
+  }
+  .status-submitted  { background: #e0f0ff; color: #1d6fa4; }
+  .status-approved   { background: #e8f5e9; color: #2e7d32; }
+  .status-production { background: #fff3e0; color: #e65100; }
+  .status-qc         { background: #f3e5f5; color: #6a1b9a; }
+  .status-shipped    { background: #e8eaf6; color: #283593; }
+  .status-delivered  { background: #111; color: #fff; }
+  .po-chevron { margin-left: auto; font-size: 12px; color: #aaa; transition: transform 0.2s; }
+  .po-chevron.open { transform: rotate(180deg); }
+  .po-detail { display: none; padding: 0 20px 20px; }
+  .po-detail.open { display: block; }
+  .po-progress { display: flex; align-items: center; gap: 0; margin: 20px 0 24px; }
+  .progress-step { flex: 1; text-align: center; position: relative; }
+  .progress-step::before {
+    content: ''; position: absolute; top: 13px; left: -50%; right: 50%;
+    height: 2px; background: #e0e0e0; z-index: 0;
+  }
+  .progress-step:first-child::before { display: none; }
+  .progress-step.done::before { background: #111; }
+  .progress-dot {
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid #e0e0e0;
+    background: #fff; margin: 0 auto 6px; position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: center; font-size: 11px;
+  }
+  .progress-step.done .progress-dot { background: #111; border-color: #111; color: #fff; }
+  .progress-step.current .progress-dot { border-color: #111; background: #fff; color: #111; font-weight: 700; }
+  .progress-step-label { font-size: 10px; color: #aaa; }
+  .progress-step.done .progress-step-label { color: #111; font-weight: 600; }
+  .progress-step.current .progress-step-label { color: #111; font-weight: 700; }
+  .po-eta-row {
+    background: #f8f8f8; border: 1px solid #eee; padding: 12px 16px;
+    display: flex; gap: 32px; margin-bottom: 20px;
+  }
+  .po-eta-item { }
+  .po-eta-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .po-eta-value { font-size: 13px; font-weight: 700; }
+  .po-items-title { font-size: 11px; font-weight: 700; color: #555; letter-spacing: 0.5px; margin-bottom: 12px; text-transform: uppercase; }
+  .po-item-row {
+    display: flex; align-items: center; gap: 16px; padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .po-item-row:last-child { border-bottom: none; }
+  .po-item-img { width: 56px; height: 72px; object-fit: cover; background: #f0f0f0; flex-shrink: 0; }
+  .po-item-info { flex: 1; }
+  .po-item-name { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+  .po-item-sub { font-size: 11px; color: #888; }
+  .po-item-sizes { font-size: 11px; color: #555; margin-top: 4px; }
+  .po-item-amount { text-align: right; }
+  .po-item-qty { font-size: 11px; color: #888; margin-bottom: 2px; }
+  .po-item-price { font-size: 13px; font-weight: 700; }
+  .empty-mypage { text-align: center; padding: 80px 32px; color: #aaa; }
+  .empty-mypage p { font-size: 14px; margin-bottom: 4px; }
+  .empty-mypage span { font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LOGIN PAGE
+══════════════════════════════════════ -->
+<div class="login-page active" id="login-page">
+  <div class="login-left">
+    <div class="login-left-logo">
+      MUSINSA STANDARD
+      <span>B2B PARTNER PORTAL</span>
+    </div>
+    <div class="login-left-headline">
+      <h1>Global Partner<br><em>Ordering System</em></h1>
+      <p>무신사 스탠다드의 글로벌 파트너를 위한 전용 발주 플랫폼입니다.<br>시즌 상품을 탐색하고 실시간으로 발주 현황을 확인하세요.</p>
+    </div>
+    <div class="login-left-footer">© 2026 MUSINSA STANDARD. All rights reserved.</div>
+  </div>
+  <div class="login-right">
+    <div class="login-right-title">Sign in</div>
+    <div class="login-right-sub">파트너 계정으로 로그인하세요</div>
+    <div class="login-field">
+      <label>ID</label>
+      <input type="text" id="login-id" placeholder="Partner ID" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="login-pw" placeholder="Password" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <div class="login-error" id="login-error">ID 또는 비밀번호를 확인해주세요.</div>
+    <button class="btn-login" onclick="doLogin()">SIGN IN</button>
+    <hr class="login-divider">
+    <div class="login-contact">계정 발급 문의 · <a href="#">globalpartner@musinsa.com</a></div>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo">MUSINSA STANDARD</div>
+    <div class="summary-bar">
+      <span>STYLES <strong id="sum-styles">0</strong></span>
+      <span>QTY <strong id="sum-qty">0</strong></span>
+      <span>TOTAL <strong id="sum-total">$0</strong></span>
+      <button class="btn-order" onclick="goToCart()">ORDER ›</button>
+      <button class="btn-mypage" onclick="goToMyPage()">MY PAGE</button>
+      <div class="header-account">
+        <span class="account-id" id="header-account-id"></span>
+        <button class="btn-logout" onclick="doLogout()">LOGOUT</button>
+      </div>
+    </div>
+  </div>
+  <div class="header-nav">
+    <div class="nav-tab active" onclick="switchScreen('screen1', this)">ALL</div>
+    <div class="nav-tab" onclick="switchScreen('screen1', this)">OUTER</div>
+    <div class="nav-tab" onclick="switchScreen('screen1', this)">TOP</div>
+    <div class="nav-tab" onclick="switchScreen('screen1', this)">BOTTOM</div>
+    <div class="nav-tab" onclick="switchScreen('screen1', this)">ACCESSORIES</div>
+    <div class="search-box">
+      <input type="text" placeholder="Search style name or number...">
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 1: PRODUCT LIST
+══════════════════════════════════════ -->
+<div class="screen active" id="screen1">
+  <div class="product-grid" id="product-grid"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 3: CART
+══════════════════════════════════════ -->
+<div class="screen" id="screen3">
+  <div id="cart-content"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 4: ORDER CONFIRM
+══════════════════════════════════════ -->
+<div class="screen" id="screen4">
+  <div class="order-confirm-wrap">
+    <div class="order-confirm-title">FINAL ORDER REVIEW — Adjust quantities before submitting</div>
+    <div id="confirm-list"></div>
+  </div>
+  <div class="order-final-summary">
+    <div class="final-summary-items">
+      <div class="final-summary-item">
+        <div class="final-summary-label">STYLE QTY</div>
+        <div class="final-summary-value" id="final-styles">0</div>
+      </div>
+      <div class="final-summary-item">
+        <div class="final-summary-label">TOTAL QTY</div>
+        <div class="final-summary-value" id="final-qty">0</div>
+      </div>
+      <div class="final-summary-item">
+        <div class="final-summary-label">TOTAL PRICE</div>
+        <div class="final-summary-value" id="final-price">$0</div>
+      </div>
+    </div>
+    <button class="btn-submit-order" onclick="submitOrder()">SUBMIT ORDER</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 2: PRODUCT DETAIL MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-images">
+      <img class="modal-main-img" id="modal-main-img" src="" alt="">
+      <div class="modal-thumbs" id="modal-thumbs"></div>
+    </div>
+    <div class="modal-info">
+      <div class="modal-product-name" id="modal-name"></div>
+      <div class="modal-style-no" id="modal-style"></div>
+      <hr class="modal-divider">
+      <div class="modal-prices">
+        <div class="modal-price-usd" id="modal-price-usd"></div>
+        <div class="modal-price-krw" id="modal-price-krw"></div>
+        <div class="modal-price-note">* Wholesale price applied with your agreed discount rate</div>
+      </div>
+      <hr class="modal-divider">
+      <div class="info-row"><span class="info-label">Color</span><span class="info-value" id="modal-color"></span></div>
+      <div class="info-row"><span class="info-label">Material</span><span class="info-value" id="modal-material"></span></div>
+      <div class="info-row"><span class="info-label">Country of Origin</span><span class="info-value" id="modal-origin"></span></div>
+      <div class="info-row"><span class="info-label">Sample Size</span><span class="info-value" id="modal-sample"></span></div>
+      <div class="info-row"><span class="info-label">Delivery Date</span><span class="info-value" id="modal-delivery"></span></div>
+      <div class="info-row"><span class="info-label">Category</span><span class="info-value" id="modal-category"></span></div>
+      <hr class="modal-divider">
+      <div class="size-table">
+        <div class="size-table-title">SIZE TABLE</div>
+        <div class="size-hint">* Please input your order quantity</div>
+        <div class="size-inputs" id="modal-size-inputs"></div>
+      </div>
+      <div class="modal-totals">
+        <div class="total-item">
+          <div class="total-label">Total Quantity</div>
+          <div class="total-value" id="modal-total-qty">0</div>
+        </div>
+        <div class="total-item">
+          <div class="total-label">Total Amount</div>
+          <div class="total-value" id="modal-total-amount">$0</div>
+        </div>
+      </div>
+      <button class="btn-add-to-selection" id="btn-add" onclick="addToSelection()">ADD TO SELECTION</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCREEN 5: MY PAGE
+══════════════════════════════════════ -->
+<div class="screen" id="screen5">
+  <div class="mypage-wrap">
+    <div class="mypage-title">MY PAGE</div>
+    <div class="mypage-subtitle">Order history and production status</div>
+    <div id="mypage-content"></div>
+  </div>
+</div>
+
+<!-- ── SUCCESS SCREEN ── -->
+<div class="success-screen" id="success-screen">
+  <div class="success-icon">✓</div>
+  <div class="success-title">Order Submitted Successfully</div>
+  <div class="success-po" id="success-po-no"></div>
+  <div style="font-size:12px;color:#aaa;margin-top:4px;">You can track your order status in My Page.</div>
+  <div style="display:flex;gap:12px;margin-top:16px;">
+    <button class="btn-back-home" onclick="resetAll()">BACK TO CATALOG</button>
+    <button onclick="goToMyPageFromSuccess()" style="background:#fff;color:#111;border:2px solid #111;padding:12px 32px;font-size:13px;cursor:pointer;font-weight:600;">VIEW MY ORDERS</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const CDN = 'https://image.msscdn.net';
+const PRODUCTS = [
+  {
+    id: 1,
+    name: 'Hybrid Blazer', styleNo: '5755626', color: 'BLACK',
+    material: 'POLYESTER 63%, RAYON 33%, SPANDEX 4%', category: 'MENS OUTER', origin: 'KR',
+    priceUSD: 138, priceKRW: 209000, sampleSize: 'M', delivery: '2026-09-20',
+    carryOver: false,
+    images: [
+      `${CDN}/images/goods_img/20251120/5755626/5755626_17732136582306_500.jpg`,
+      `${CDN}/images/prd_img/20251120/5755626/detail_5755626_17732136687844_500.jpg`,
+      `${CDN}/images/prd_img/20251120/5755626/detail_5755626_17732136694236_500.jpg`,
+      `${CDN}/images/prd_img/20251120/5755626/detail_5755626_17732136701389_500.jpg`,
+    ],
+    sizes: ['XS','S','M','L','XL']
+  },
+  {
+    id: 2,
+    name: 'Utility Trail Vest', styleNo: '5755363', color: 'BLACK',
+    material: 'NYLON 100%', category: 'MENS OUTER', origin: 'KR',
+    priceUSD: 52, priceKRW: 79900, sampleSize: 'M', delivery: '2026-09-20',
+    carryOver: false,
+    images: [
+      `${CDN}/images/goods_img/20251120/5755363/5755363_17742509480405_500.jpg`,
+      `${CDN}/images/prd_img/20251120/5755363/detail_5755363_17742509542187_500.jpg`,
+      `${CDN}/images/prd_img/20251120/5755363/detail_5755363_17742509551867_500.jpg`,
+      `${CDN}/images/prd_img/20251120/5755363/detail_5755363_17742509561021_500.jpg`,
+    ],
+    sizes: ['S','M','L','XL']
+  },
+  {
+    id: 3,
+    name: 'Slim Crew Neck T-Shirt', styleNo: '5915548', color: 'WHITE',
+    material: 'COTTON 100%', category: 'UNISEX TOP', origin: 'KR',
+    priceUSD: 18, priceKRW: 27900, sampleSize: 'M', delivery: '2026-08-15',
+    carryOver: true,
+    images: [
+      `${CDN}/images/goods_img/20260120/5915548/5915548_17732106584930_500.jpg`,
+      `${CDN}/images/prd_img/20260120/5915548/detail_5915548_17732106757509_500.jpg`,
+      `${CDN}/images/prd_img/20260120/5915548/detail_5915548_17732106764477_500.jpg`,
+      `${CDN}/images/prd_img/20260120/5915548/detail_5915548_17732106771669_500.jpg`,
+    ],
+    sizes: ['XS','S','M','L','XL','2XL']
+  },
+  {
+    id: 4,
+    name: 'Harrington Jacket', styleNo: '3793566', color: 'BEIGE',
+    material: 'COTTON 55%, POLYESTER 45%', category: 'UNISEX OUTER', origin: 'KR',
+    priceUSD: 98, priceKRW: 149000, sampleSize: 'M', delivery: '2026-09-15',
+    carryOver: false,
+    images: [
+      `${CDN}/images/goods_img/20240112/3793566/3793566_17737142457357_500.jpg`,
+      `${CDN}/images/prd_img/20240112/3793566/detail_3793566_17737142541358_500.jpg`,
+      `${CDN}/images/prd_img/20240112/3793566/detail_3793566_17737142549474_500.jpg`,
+      `${CDN}/images/prd_img/20240112/3793566/detail_3793566_17737142556998_500.jpg`,
+    ],
+    sizes: ['XS','S','M','L','XL']
+  },
+  {
+    id: 5,
+    name: 'Linen-Like Long Bermuda Denim Pants', styleNo: '5815485', color: 'LIGHT INDIGO',
+    material: 'COTTON 99%, POLYURETHANE 1%', category: 'MENS BOTTOM', origin: 'KR',
+    priceUSD: 62, priceKRW: 94900, sampleSize: 'M', delivery: '2026-09-01',
+    carryOver: false,
+    images: [
+      `${CDN}/images/goods_img/20251209/5815485/5815485_17748751724541_500.jpg`,
+      `${CDN}/images/prd_img/20251209/5815485/detail_5815485_17748751788304_500.jpg`,
+      `${CDN}/images/prd_img/20251209/5815485/detail_5815485_17748751795155_500.jpg`,
+      `${CDN}/images/prd_img/20251209/5815485/detail_5815485_17748751804362_500.jpg`,
+    ],
+    sizes: ['S','M','L','XL']
+  },
+  {
+    id: 6,
+    name: 'NP Belted Cargo Shorts', styleNo: '5755293', color: 'GREYISH BEIGE',
+    material: 'NYLON 100%', category: 'MENS BOTTOM', origin: 'KR',
+    priceUSD: 46, priceKRW: 69900, sampleSize: 'M', delivery: '2026-08-20',
+    carryOver: false,
+    images: [
+      `${CDN}/images/goods_img/20251120/5755293/5755293_17742362391216_500.jpg`,
+      `${CDN}/images/prd_img/20251120/5755293/detail_5755293_17742425663096_500.jpg`,
+      `${CDN}/images/prd_img/20251120/5755293/detail_5755293_17744145885069_500.jpg`,
+      `${CDN}/images/prd_img/20251120/5755293/detail_5755293_17742362485707_500.jpg`,
+    ],
+    sizes: ['S','M','L','XL']
+  },
+  {
+    id: 8,
+    name: 'Washed Poplin Short Sleeve Crop Shirt', styleNo: '5627632', color: 'SKY BLUE',
+    material: 'COTTON 100%', category: 'WOMENS TOP', origin: 'KR',
+    priceUSD: 23, priceKRW: 35900, sampleSize: 'S', delivery: '2026-08-15',
+    carryOver: false,
+    images: [
+      `${CDN}/images/goods_img/20251022/5627632/5627632_17750295247897_500.jpg`,
+      `${CDN}/images/prd_img/20251022/5627632/detail_5627632_17750295316284_500.jpg`,
+      `${CDN}/images/prd_img/20251022/5627632/detail_5627632_17750295324262_500.jpg`,
+      `${CDN}/images/prd_img/20251022/5627632/detail_5627632_17750295334304_500.jpg`,
+    ],
+    sizes: ['XS','S','M','L','XL']
+  },
+  {
+    id: 7,
+    name: 'Balloon Denim Pants', styleNo: '5860706', color: 'SKY BLUE',
+    material: 'COTTON 100%', category: 'UNISEX BOTTOM', origin: 'KR',
+    priceUSD: 72, priceKRW: 109000, sampleSize: 'M', delivery: '2026-09-01',
+    carryOver: true,
+    images: [
+      `${CDN}/images/goods_img/20251230/5860706/5860706_17744254184070_500.jpg`,
+      `${CDN}/images/prd_img/202604020807594539745227269cda54f6ed5f.jpg`,
+      `${CDN}/images/prd_img/202603251732322309897752969c39da038655.jpg`,
+      `${CDN}/images/prd_img/202603251732320312975907969c39da007a4a.jpg`,
+    ],
+    sizes: ['S','M','L','XL']
+  },
+];
+
+// ── STATE ──
+let cart = {};
+let currentProductId = null;
+let orderHistory = [
+  // Pre-seeded past orders for demo
+  {
+    poNo: 'PO-2026-38291', date: '2026-03-10', season: 'SS26',
+    status: 'shipped', statusLabel: 'Shipped',
+    totalStyles: 5, totalQty: 820, totalUSD: 94280,
+    eta: '2026-05-15', shippedDate: '2026-04-28', poApprovedDate: '2026-03-18',
+    deposit: '$28,284',
+    items: [
+      { name: 'Hybrid Blazer', styleNo: '5755626', color: 'BLACK', img: `${CDN}/images/goods_img/20251120/5755626/5755626_17732136582306_500.jpg`, sizes: {S:60,M:100,L:80,XL:40}, priceUSD: 138 },
+      { name: 'Slim Crew Neck T-Shirt', styleNo: '5915548', color: 'WHITE', img: `${CDN}/images/goods_img/20260120/5915548/5915548_17732106584930_500.jpg`, sizes: {S:80,M:120,L:80,XL:40}, priceUSD: 18 },
+      { name: 'NP Belted Cargo Shorts', styleNo: '5755293', color: 'GREYISH BEIGE', img: `${CDN}/images/goods_img/20251120/5755293/5755293_17742362391216_500.jpg`, sizes: {S:60,M:80,L:60,XL:20}, priceUSD: 46 },
+    ]
+  },
+  {
+    poNo: 'PO-2025-71044', date: '2025-09-05', season: 'FW25',
+    status: 'delivered', statusLabel: 'Delivered',
+    totalStyles: 3, totalQty: 420, totalUSD: 47040,
+    eta: '2025-11-20', shippedDate: '2025-11-08', poApprovedDate: '2025-09-12',
+    deposit: '$14,112',
+    items: [
+      { name: 'Balloon Denim Pants', styleNo: '5860706', color: 'SKY BLUE', img: `${CDN}/images/goods_img/20251230/5860706/5860706_17744254184070_500.jpg`, sizes: {XS:40,S:80,M:100,L:60}, priceUSD: 72 },
+    ]
+  }
+];
+
+// ── LOGIN ──
+function doLogin() {
+  const id = document.getElementById('login-id').value.trim();
+  const pw = document.getElementById('login-pw').value.trim();
+  const errorEl = document.getElementById('login-error');
+  if (!id || !pw) {
+    errorEl.classList.add('show');
+    return;
+  }
+  errorEl.classList.remove('show');
+  document.getElementById('header-account-id').textContent = id;
+  document.getElementById('login-page').classList.remove('active');
+  renderProductGrid();
+  updateSummary();
+}
+
+function doLogout() {
+  cart = {};
+  orderHistory = orderHistory.filter(o => o.poNo.startsWith('PO-2025') || o.poNo.startsWith('PO-2026-38'));
+  document.getElementById('login-id').value = '';
+  document.getElementById('login-pw').value = '';
+  document.getElementById('header-account-id').textContent = '';
+  document.getElementById('login-page').classList.add('active');
+  switchScreen('screen1');
+  document.querySelectorAll('.nav-tab')[0].classList.add('active');
+  updateSummary();
+}
+
+// ── INIT ──
+function init() {
+  // Start on login page — doLogin() triggers product grid render
+}
+
+function renderProductGrid() {
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = PRODUCTS.map(p => {
+    const inCart = cart[p.id];
+    const totalQty = inCart ? Object.values(inCart.sizes).reduce((a,b) => a+b, 0) : 0;
+    return `
+      <div class="product-card" onclick="openModal(${p.id})">
+        <div class="img-wrap">
+          <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
+          ${p.carryOver ? '<span class="carry-over-tag">CARRY OVER</span>' : ''}
+          ${inCart ? `<span class="in-cart-badge">IN CART</span>` : ''}
+        </div>
+        <div class="card-info">
+          <div class="product-name">${p.name}</div>
+          <div class="style-no">${p.styleNo}</div>
+          <div class="color">${p.color}</div>
+          <div class="material">${p.material}</div>
+          <div class="price-row">
+            <span class="price-usd">$${p.priceUSD}</span>
+            <span class="price-krw">₩${p.priceKRW.toLocaleString()}</span>
+          </div>
+        </div>
+        ${inCart ? `
+        <div class="card-actions">
+          <button class="btn-remove" onclick="event.stopPropagation(); removeFromCart(${p.id})">REMOVE</button>
+          <span class="qty-display">QTY: ${totalQty}</span>
+        </div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+// ── MODAL ──
+function openModal(productId) {
+  currentProductId = productId;
+  const p = PRODUCTS.find(x => x.id === productId);
+
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-style').textContent = p.styleNo;
+  document.getElementById('modal-price-usd').textContent = `$${p.priceUSD} USD`;
+  document.getElementById('modal-price-krw').textContent = `₩${p.priceKRW.toLocaleString()} KRW`;
+  document.getElementById('modal-color').textContent = p.color;
+  document.getElementById('modal-material').textContent = p.material;
+  document.getElementById('modal-origin').textContent = p.origin;
+  document.getElementById('modal-sample').textContent = p.sampleSize;
+  document.getElementById('modal-delivery').textContent = p.delivery;
+  document.getElementById('modal-category').textContent = p.category;
+
+  // Main image
+  document.getElementById('modal-main-img').src = p.images[0];
+
+  // Thumbnails
+  const thumbsEl = document.getElementById('modal-thumbs');
+  thumbsEl.innerHTML = p.images.map((img, i) =>
+    `<img src="${img}" class="${i===0?'active':''}" onclick="switchThumb(this, '${img}')" alt="">`
+  ).join('');
+
+  // Size inputs — pre-fill if already in cart
+  const existing = cart[productId] ? cart[productId].sizes : {};
+  const sizeInputsEl = document.getElementById('modal-size-inputs');
+  sizeInputsEl.innerHTML = p.sizes.map(s => `
+    <div class="size-input-group">
+      <div class="size-label-badge">${s}</div>
+      <input type="number" min="0" value="${existing[s] || 0}"
+        data-size="${s}" oninput="updateModalTotals()" onchange="updateModalTotals()">
+    </div>`).join('');
+
+  // Button label
+  document.getElementById('btn-add').textContent = cart[productId] ? 'UPDATE SELECTION' : 'ADD TO SELECTION';
+
+  updateModalTotals();
+  document.getElementById('modal').classList.add('open');
+}
+
+function switchThumb(el, src) {
+  document.getElementById('modal-main-img').src = src;
+  document.querySelectorAll('.modal-thumbs img').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+function updateModalTotals() {
+  const p = PRODUCTS.find(x => x.id === currentProductId);
+  const inputs = document.querySelectorAll('#modal-size-inputs input');
+  let totalQty = 0;
+  inputs.forEach(inp => { totalQty += parseInt(inp.value) || 0; });
+  document.getElementById('modal-total-qty').textContent = totalQty;
+  document.getElementById('modal-total-amount').textContent = `$${(totalQty * p.priceUSD).toLocaleString()}`;
+}
+
+function addToSelection() {
+  const p = PRODUCTS.find(x => x.id === currentProductId);
+  const inputs = document.querySelectorAll('#modal-size-inputs input');
+  const sizes = {};
+  inputs.forEach(inp => { sizes[inp.dataset.size] = parseInt(inp.value) || 0; });
+  const total = Object.values(sizes).reduce((a,b) => a+b, 0);
+  if (total === 0) { alert('Please enter at least 1 quantity.'); return; }
+  cart[currentProductId] = { product: p, sizes };
+  updateSummary();
+  renderProductGrid();
+  closeModal();
+}
+
+function removeFromCart(productId) {
+  delete cart[productId];
+  updateSummary();
+  renderProductGrid();
+}
+
+// ── SUMMARY ──
+function updateSummary() {
+  const styles = Object.keys(cart).length;
+  let qty = 0, total = 0;
+  Object.values(cart).forEach(item => {
+    const q = Object.values(item.sizes).reduce((a,b)=>a+b, 0);
+    qty += q;
+    total += q * item.product.priceUSD;
+  });
+  document.getElementById('sum-styles').textContent = styles;
+  document.getElementById('sum-qty').textContent = qty.toLocaleString();
+  document.getElementById('sum-total').textContent = `$${total.toLocaleString()}`;
+}
+
+// ── NAVIGATION ──
+function switchScreen(screenId, tabEl) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  if (tabEl) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    tabEl.classList.add('active');
+  }
+}
+
+function goToCart() {
+  if (Object.keys(cart).length === 0) {
+    alert('No items in cart. Please add items first.');
+    return;
+  }
+  renderCart();
+  switchScreen('screen3');
+}
+
+function renderCart() {
+  const el = document.getElementById('cart-content');
+  if (Object.keys(cart).length === 0) {
+    el.innerHTML = `<div class="empty-cart"><p>No items selected.</p>
+      <button class="btn-back-list" onclick="switchScreen('screen1')">BACK TO CATALOG</button></div>`;
+    return;
+  }
+  const items = Object.values(cart);
+  const gridHtml = `
+    <div class="cart-grid">
+      ${items.map(item => {
+        const p = item.product;
+        const qty = Object.values(item.sizes).reduce((a,b)=>a+b,0);
+        const total = qty * p.priceUSD;
+        return `
+          <div class="cart-card">
+            <div class="img-wrap">
+              <img src="${p.images[0]}" alt="${p.name}">
+              ${p.carryOver ? '<span class="carry-over-tag">CARRY OVER</span>' : ''}
+            </div>
+            <div class="cart-card-info">
+              <div class="product-name">${p.name}</div>
+              <div class="style-no">${p.styleNo}</div>
+              <div class="color">${p.color}</div>
+              <div class="material">${p.material}</div>
+            </div>
+            <div class="cart-card-footer">
+              <button class="btn-cart-remove" onclick="removeFromCart(${p.id}); renderCart();">REMOVE</button>
+              <div class="cart-qty-info">QTY <strong>${qty}</strong> · <strong>$${total.toLocaleString()}</strong></div>
+            </div>
+          </div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:16px;padding:16px 32px 32px;align-items:center;">
+      <button onclick="switchScreen('screen1')" style="background:#fff;border:1px solid #ddd;padding:10px 24px;font-size:12px;cursor:pointer;">← BACK TO CATALOG</button>
+      <button onclick="goToConfirm()" style="background:#111;color:#fff;border:none;padding:10px 32px;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;">PROCEED TO ORDER ›</button>
+    </div>`;
+  el.innerHTML = gridHtml;
+}
+
+function goToConfirm() {
+  renderConfirm();
+  switchScreen('screen4');
+}
+
+function renderConfirm() {
+  const items = Object.values(cart);
+  document.getElementById('confirm-list').innerHTML = items.map(item => {
+    const p = item.product;
+    return `
+      <div class="confirm-item">
+        <div class="confirm-item-inner">
+          <img class="confirm-item-img" src="${p.images[0]}" alt="${p.name}">
+          <div class="confirm-item-meta">
+            <div class="product-name">${p.name}</div>
+            <div class="style-no">${p.styleNo}</div>
+            <div class="color">Color: ${p.color}</div>
+            <div class="category">${p.category}</div>
+          </div>
+          <div class="confirm-size-inputs">
+            ${p.sizes.map(s => `
+              <div class="confirm-size-group">
+                <div class="confirm-size-label">${s}</div>
+                <input class="confirm-size-input" type="number" min="0"
+                  value="${item.sizes[s] || 0}"
+                  data-pid="${p.id}" data-size="${s}"
+                  oninput="updateConfirmTotals()">
+              </div>`).join('')}
+          </div>
+          <div class="confirm-item-totals">
+            <div class="confirm-total-row">
+              <div class="confirm-total-label">ITEM PRICE/1PC</div>
+              <div class="confirm-total-value">$${p.priceUSD}</div>
+            </div>
+            <div class="confirm-total-row">
+              <div class="confirm-total-label">ITEM TOTAL QTY</div>
+              <div class="confirm-total-value" id="confirm-qty-${p.id}">
+                ${Object.values(item.sizes).reduce((a,b)=>a+b,0)}
+              </div>
+            </div>
+            <div class="confirm-total-row">
+              <div class="confirm-total-label">ITEM TOTAL PRICE</div>
+              <div class="confirm-total-value" id="confirm-price-${p.id}">
+                $${(Object.values(item.sizes).reduce((a,b)=>a+b,0) * p.priceUSD).toLocaleString()}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+  updateConfirmTotals();
+}
+
+function updateConfirmTotals() {
+  // Update per-item totals
+  const inputs = document.querySelectorAll('.confirm-size-input');
+  const pidQtys = {};
+  inputs.forEach(inp => {
+    const pid = inp.dataset.pid;
+    const val = parseInt(inp.value) || 0;
+    pidQtys[pid] = (pidQtys[pid] || 0) + val;
+    // sync back to cart
+    if (cart[pid]) cart[pid].sizes[inp.dataset.size] = val;
+  });
+  Object.entries(pidQtys).forEach(([pid, qty]) => {
+    const p = PRODUCTS.find(x => x.id == pid);
+    const qEl = document.getElementById(`confirm-qty-${pid}`);
+    const pEl = document.getElementById(`confirm-price-${pid}`);
+    if (qEl) qEl.textContent = qty;
+    if (pEl) pEl.textContent = `$${(qty * p.priceUSD).toLocaleString()}`;
+  });
+  // Update footer
+  let totalStyles = Object.keys(pidQtys).length;
+  let totalQty = Object.values(pidQtys).reduce((a,b)=>a+b,0);
+  let totalPrice = 0;
+  Object.entries(pidQtys).forEach(([pid, qty]) => {
+    const p = PRODUCTS.find(x => x.id == pid);
+    totalPrice += qty * p.priceUSD;
+  });
+  document.getElementById('final-styles').textContent = totalStyles;
+  document.getElementById('final-qty').textContent = totalQty.toLocaleString();
+  document.getElementById('final-price').textContent = `$${totalPrice.toLocaleString()}`;
+  updateSummary();
+}
+
+function submitOrder() {
+  const poNo = 'PO-' + new Date().getFullYear() + '-' + Math.floor(Math.random()*90000+10000);
+  const today = new Date().toISOString().slice(0,10);
+  let totalQty = 0, totalUSD = 0;
+  const items = Object.values(cart).map(item => {
+    const q = Object.values(item.sizes).reduce((a,b)=>a+b,0);
+    totalQty += q;
+    totalUSD += q * item.product.priceUSD;
+    return {
+      name: item.product.name, styleNo: item.product.styleNo,
+      color: item.product.color, img: item.product.images[0],
+      sizes: {...item.sizes}, priceUSD: item.product.priceUSD
+    };
+  });
+  const deposit = '$' + Math.round(totalUSD * 0.3).toLocaleString();
+  // Estimate ETA ~5 months out
+  const etaDate = new Date(); etaDate.setMonth(etaDate.getMonth() + 5);
+  const eta = etaDate.toISOString().slice(0,10);
+  orderHistory.unshift({
+    poNo, date: today, season: 'FW26',
+    status: 'submitted', statusLabel: 'PO Submitted',
+    totalStyles: items.length, totalQty, totalUSD,
+    eta, shippedDate: null, poApprovedDate: null,
+    deposit, items
+  });
+  document.getElementById('success-po-no').textContent = `PO Number: ${poNo}`;
+  document.getElementById('success-screen').classList.add('open');
+}
+
+function resetAll() {
+  cart = {};
+  document.getElementById('success-screen').classList.remove('open');
+  updateSummary();
+  renderProductGrid();
+  switchScreen('screen1');
+  document.querySelectorAll('.nav-tab')[0].classList.add('active');
+}
+
+function goToMyPage() {
+  renderMyPage();
+  switchScreen('screen5');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+}
+
+function goToMyPageFromSuccess() {
+  document.getElementById('success-screen').classList.remove('open');
+  cart = {};
+  updateSummary();
+  renderProductGrid();
+  renderMyPage();
+  switchScreen('screen5');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  // highlight MY PAGE tab
+  const tabs = document.querySelectorAll('.nav-tab');
+  tabs[tabs.length - 1].classList.add('active');
+}
+
+const STATUS_STEPS = [
+  { key: 'submitted',  label: 'PO Submitted' },
+  { key: 'approved',   label: 'PO Approved'  },
+  { key: 'production', label: 'In Production' },
+  { key: 'qc',         label: 'QC Check'     },
+  { key: 'shipped',    label: 'Shipped'       },
+  { key: 'delivered',  label: 'Delivered'     },
+];
+const STATUS_ORDER = STATUS_STEPS.map(s => s.key);
+
+function renderMyPage() {
+  const el = document.getElementById('mypage-content');
+  if (orderHistory.length === 0) {
+    el.innerHTML = `<div class="empty-mypage"><p>No orders yet.</p><span>Your order history will appear here after you submit an order.</span></div>`;
+    return;
+  }
+  el.innerHTML = orderHistory.map((order, idx) => {
+    const statusIdx = STATUS_ORDER.indexOf(order.status);
+    const stepsHtml = STATUS_STEPS.map((step, i) => {
+      const cls = i < statusIdx ? 'done' : i === statusIdx ? 'current done' : '';
+      const icon = i < statusIdx ? '✓' : i === statusIdx ? '●' : '';
+      return `<div class="progress-step ${cls}">
+        <div class="progress-dot">${icon}</div>
+        <div class="progress-step-label">${step.label}</div>
+      </div>`;
+    }).join('');
+
+    const itemsHtml = order.items.map(item => {
+      const qty = Object.values(item.sizes).reduce((a,b)=>a+b,0);
+      const sizesStr = Object.entries(item.sizes).filter(([,v])=>v>0).map(([k,v])=>`${k}:${v}`).join(' / ');
+      return `<div class="po-item-row">
+        <img class="po-item-img" src="${item.img}" alt="${item.name}">
+        <div class="po-item-info">
+          <div class="po-item-name">${item.name}</div>
+          <div class="po-item-sub">${item.styleNo} · ${item.color}</div>
+          <div class="po-item-sizes">${sizesStr}</div>
+        </div>
+        <div class="po-item-amount">
+          <div class="po-item-qty">QTY ${qty}</div>
+          <div class="po-item-price">$${(qty * item.priceUSD).toLocaleString()}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    const pillClass = {
+      submitted: 'status-submitted', approved: 'status-approved',
+      production: 'status-production', qc: 'status-qc',
+      shipped: 'status-shipped', delivered: 'status-delivered'
+    }[order.status] || 'status-submitted';
+
+    return `
+      <div class="po-card">
+        <div class="po-card-header" onclick="togglePoDetail(${idx})">
+          <div class="po-no">${order.poNo}</div>
+          <div class="po-date">${order.date}</div>
+          <div class="po-styles">${order.totalStyles} styles · ${order.totalQty.toLocaleString()} pcs</div>
+          <div class="po-amount">$${order.totalUSD.toLocaleString()}</div>
+          <span class="po-status-pill ${pillClass}">${order.statusLabel}</span>
+          <span class="po-chevron" id="chevron-${idx}">▼</span>
+        </div>
+        <div class="po-detail" id="po-detail-${idx}">
+          <div class="po-progress">${stepsHtml}</div>
+          <div class="po-eta-row">
+            <div class="po-eta-item">
+              <div class="po-eta-label">Order Date</div>
+              <div class="po-eta-value">${order.date}</div>
+            </div>
+            <div class="po-eta-item">
+              <div class="po-eta-label">PO Approved</div>
+              <div class="po-eta-value">${order.poApprovedDate || '—'}</div>
+            </div>
+            <div class="po-eta-item">
+              <div class="po-eta-label">Shipped Date</div>
+              <div class="po-eta-value">${order.shippedDate || '—'}</div>
+            </div>
+            <div class="po-eta-item">
+              <div class="po-eta-label">ETA</div>
+              <div class="po-eta-value">${order.eta}</div>
+            </div>
+            <div class="po-eta-item">
+              <div class="po-eta-label">Deposit (30%)</div>
+              <div class="po-eta-value">${order.deposit}</div>
+            </div>
+          </div>
+          <div class="po-items-title">Order Items</div>
+          ${itemsHtml}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function togglePoDetail(idx) {
+  const detail = document.getElementById(`po-detail-${idx}`);
+  const chevron = document.getElementById(`chevron-${idx}`);
+  const header = detail.previousElementSibling;
+  const isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+init();
+</script>
+</body>
+</html>

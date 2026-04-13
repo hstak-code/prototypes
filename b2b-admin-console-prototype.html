@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2B Admin Console — MUSINSA STANDARD</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Helvetica Neue', Arial, sans-serif; background: #f5f5f5; color: #1a1a1a; font-size: 13px; }
+
+  :root {
+    --header-h: 56px;
+    --sidebar-w: 224px;
+    --yellow: #FFC700;
+    --yellow-low: rgba(255,199,0,0.10);
+    --g900: #000000;
+    --g800: #1a1a1a;
+    --g700: #2a2a2a;
+    --g600: #666666;
+    --g500: #8a8a8a;
+    --g400: #cccccc;
+    --g300: #e0e0e0;
+    --g200: #ebebeb;
+    --g100: #f5f5f5;
+    --g050: #f7f7f7;
+    --blue: #245EFF;
+    --red: #F31110;
+    --green: #1ea514;
+  }
+
+  /* ── HEADER ── */
+  .hdr {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--header-h);
+    background: #fff; border-bottom: 1px solid var(--g200);
+    display: flex; align-items: center; z-index: 100;
+  }
+  .hdr-brand {
+    width: var(--sidebar-w); flex-shrink: 0; height: 100%;
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 20px; border-right: 1px solid var(--g200);
+  }
+  .hdr-logo-icon {
+    width: 28px; height: 28px; background: var(--g800); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; letter-spacing: -0.5px; flex-shrink: 0;
+  }
+  .hdr-logo-text { line-height: 1.3; }
+  .hdr-logo-name { font-size: 12px; font-weight: 700; letter-spacing: 0.2px; color: var(--g800); }
+  .hdr-logo-sub { font-size: 10px; color: var(--g500); letter-spacing: 0.3px; }
+  .hdr-right {
+    display: flex; align-items: center; gap: 16px; margin-left: auto; padding-right: 24px;
+  }
+  .hdr-user { font-size: 12px; color: var(--g600); }
+  .hdr-user strong { color: var(--g800); font-weight: 600; }
+  .hdr-divider { width: 1px; height: 16px; background: var(--g200); }
+  .btn-hdr-logout {
+    background: none; border: none; font-size: 12px; color: var(--g500); cursor: pointer; padding: 0;
+  }
+  .btn-hdr-logout:hover { color: var(--g800); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed; top: var(--header-h); left: 0; bottom: 0;
+    width: var(--sidebar-w); background: var(--g800);
+    overflow-y: auto; z-index: 90;
+    display: flex; flex-direction: column;
+  }
+  .sb-section { padding: 20px 0 4px; }
+  .sb-section + .sb-section { border-top: 1px solid rgba(255,255,255,0.06); }
+  .sb-section-label {
+    font-size: 10px; color: #555; letter-spacing: 0.8px; text-transform: uppercase;
+    padding: 0 16px 6px; font-weight: 600;
+  }
+  .sb-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 16px; cursor: pointer; color: #888;
+    font-size: 13px; font-weight: 400;
+    border-left: 3px solid transparent; transition: all 0.15s;
+    user-select: none;
+  }
+  .sb-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
+  .sb-item.active {
+    color: var(--yellow); border-left-color: var(--yellow);
+    background: rgba(255,199,0,0.08); font-weight: 600;
+  }
+  .sb-item-icon { font-size: 15px; width: 18px; flex-shrink: 0; }
+  .sb-footer {
+    margin-top: auto; padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 11px; color: #444;
+  }
+
+  /* ── MAIN WRAP ── */
+  .main {
+    margin-left: var(--sidebar-w); margin-top: var(--header-h);
+    min-height: calc(100vh - var(--header-h));
+    background: #fff; display: flex; flex-direction: column;
+  }
+
+  /* ── PAGE ── */
+  .page {
+    display: none; height: calc(100vh - var(--header-h));
+    flex-direction: column; overflow: hidden;
+  }
+  .page.active { display: flex; }
+
+  /* ── PAGE HEADER ── */
+  .page-hdr {
+    padding: 20px 24px 16px; flex-shrink: 0;
+    border-bottom: 1px solid var(--g200);
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+  .page-title-wrap { }
+  .page-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 2px; }
+  .page-subtitle { font-size: 12px; color: var(--g600); }
+  .page-hdr-actions { display: flex; gap: 8px; }
+
+  /* ── FILTER AREA ── */
+  .filter-area {
+    background: var(--g050); border-bottom: 1px solid var(--g200);
+    padding: 14px 24px; flex-shrink: 0;
+  }
+  .filter-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-label { font-size: 11px; font-weight: 600; color: var(--g600); letter-spacing: 0.1px; }
+  .filter-input {
+    border: 1px solid var(--g300); background: #fff; padding: 7px 10px;
+    font-size: 12px; color: var(--g800); outline: none; height: 32px;
+    min-width: 140px; font-family: inherit;
+  }
+  .filter-input:focus { border-color: var(--g800); }
+  .filter-select {
+    border: 1px solid var(--g300); background: #fff; padding: 0 28px 0 10px;
+    font-size: 12px; color: var(--g800); outline: none; height: 32px;
+    min-width: 120px; appearance: none; font-family: inherit; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M0 0l5 6 5-6H0z' fill='%238a8a8a'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+  }
+  .filter-select:focus { border-color: var(--g800); }
+  .filter-date-range { display: flex; align-items: center; gap: 6px; }
+  .filter-date-sep { font-size: 12px; color: var(--g500); }
+  .filter-actions { display: flex; gap: 6px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    border: none; padding: 0 14px; height: 32px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: inherit; letter-spacing: 0.1px; white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn-primary { background: var(--g800); color: #fff; }
+  .btn-primary:hover { background: var(--g700); }
+  .btn-secondary { background: #fff; color: var(--g800); border: 1px solid var(--g300); }
+  .btn-secondary:hover { border-color: var(--g800); }
+  .btn-yellow { background: var(--yellow-low); color: #7a5c00; border: 1px solid var(--yellow); }
+  .btn-yellow:hover { background: rgba(255,199,0,0.18); }
+  .btn-sm { height: 28px; padding: 0 10px; font-size: 11px; }
+  .btn-danger { background: #FFECEC; color: var(--red); border: 1px solid #FFCDC9; }
+  .btn-danger:hover { background: #ffd9d7; }
+
+  /* ── TABLE TOOLBAR ── */
+  .table-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 24px; border-bottom: 1px solid var(--g200); flex-shrink: 0;
+    background: #fff;
+  }
+  .table-count { font-size: 13px; color: var(--g800); }
+  .table-count strong { color: var(--yellow); font-weight: 700; font-size: 14px; }
+  .table-actions { display: flex; gap: 8px; }
+
+  /* ── BULK ACTION BAR ── */
+  .bulk-bar {
+    display: none; align-items: center; gap: 12px;
+    padding: 8px 24px; background: #fff8e1; border-bottom: 1px solid #FFE082;
+    flex-shrink: 0;
+  }
+  .bulk-bar.show { display: flex; }
+  .bulk-count { font-size: 12px; font-weight: 600; color: #5f4200; }
+  .bulk-actions { display: flex; gap: 6px; }
+
+  /* ── TABLE ── */
+  .table-scroll {
+    flex: 1; overflow-y: auto; overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  thead th {
+    background: var(--g050); color: var(--g500);
+    padding: 8px 12px; text-align: left;
+    border-bottom: 1px solid var(--g200);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase;
+    position: sticky; top: 0; z-index: 10; white-space: nowrap;
+  }
+  thead th.center { text-align: center; }
+  thead th.right { text-align: right; }
+  tbody tr { border-bottom: 1px solid var(--g200); cursor: default; }
+  tbody tr:hover { background: #fafafa; }
+  tbody tr.selected { background: #fffde7; }
+  tbody td { padding: 9px 12px; color: var(--g800); vertical-align: middle; }
+  tbody td.center { text-align: center; }
+  tbody td.right { text-align: right; }
+  tbody td.mono { font-variant-numeric: tabular-nums; }
+
+  /* ── CHECKBOX ── */
+  input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; accent-color: var(--g800); }
+
+  /* ── TOGGLE ── */
+  .toggle { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute; inset: 0; background: var(--g300); cursor: pointer;
+    border-radius: 20px; transition: background 0.2s;
+  }
+  .toggle-track::before {
+    content: ''; position: absolute; width: 14px; height: 14px;
+    left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform 0.2s;
+  }
+  .toggle input:checked + .toggle-track { background: var(--g800); }
+  .toggle input:checked + .toggle-track::before { transform: translateX(16px); }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex; align-items: center; padding: 2px 8px;
+    font-size: 11px; font-weight: 600; white-space: nowrap; border-radius: 2px;
+  }
+  .badge-gray   { background: var(--g100); color: var(--g600); }
+  .badge-blue   { background: #E2F1FF; color: #0F2F99; }
+  .badge-yellow { background: #FFF4E5; color: #663D00; }
+  .badge-green  { background: #ECFFEC; color: #052f04; }
+  .badge-red    { background: #FFECEC; color: #750808; }
+  .badge-purple { background: #f5f0ff; color: #4a0e9e; }
+  .badge-on  { background: #ECFFEC; color: #052f04; }
+  .badge-off { background: var(--g100); color: var(--g500); }
+
+  /* ── IMG PLACEHOLDER ── */
+  .img-box {
+    width: 36px; height: 48px; background: var(--g100);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0; color: var(--g400);
+  }
+
+  /* ── INLINE PO INPUT ── */
+  .po-cell { display: flex; align-items: center; gap: 6px; }
+  .po-input {
+    border: 1px solid var(--g300); padding: 4px 8px; font-size: 12px;
+    width: 120px; outline: none; background: #fff; font-family: inherit;
+    height: 28px;
+  }
+  .po-input:focus { border-color: var(--g800); }
+  .po-input.saved { border-color: #c8e6c9; background: #f9fff9; }
+
+  /* ── STATUS SELECT ── */
+  .status-select {
+    border: 1px solid var(--g300); padding: 3px 22px 3px 8px; font-size: 11px;
+    background: #fff; cursor: pointer; outline: none; height: 28px; font-family: inherit;
+    font-weight: 600; appearance: none; min-width: 88px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' fill='none'%3E%3Cpath d='M0 0l4 5 4-5H0z' fill='%238a8a8a'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 6px center;
+  }
+  .status-select:focus { border-color: var(--g800); }
+
+  /* ── PAGINATION ── */
+  .pagination {
+    display: flex; align-items: center; justify-content: center; gap: 2px;
+    padding: 12px; border-top: 1px solid var(--g200); flex-shrink: 0;
+    background: #fff;
+  }
+  .pg-btn {
+    min-width: 28px; height: 28px; border: 1px solid var(--g200); background: #fff;
+    font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    padding: 0 6px; font-family: inherit;
+  }
+  .pg-btn:hover:not(.disabled):not(.active) { border-color: var(--g800); }
+  .pg-btn.active { background: var(--g800); color: #fff; border-color: var(--g800); font-weight: 700; }
+  .pg-btn.disabled { color: var(--g400); cursor: default; }
+  .pg-size {
+    border: 1px solid var(--g200); background: #fff; font-size: 12px; height: 28px;
+    padding: 0 6px; margin-left: 12px; font-family: inherit; outline: none; cursor: pointer;
+    color: var(--g600);
+  }
+
+  /* ── UPLOAD PAGE ── */
+  .upload-content { flex: 1; overflow-y: auto; padding: 24px; background: var(--g100); }
+
+  .step-flow {
+    display: flex; align-items: flex-start; gap: 0; margin-bottom: 28px;
+  }
+  .step-item { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+  .step-item + .step-item::before {
+    content: ''; position: absolute; left: calc(-50% + 16px); right: calc(50% + 16px);
+    top: 16px; height: 2px; background: var(--g200);
+  }
+  .step-item.done + .step-item::before { background: var(--g800); }
+  .step-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: #fff; border: 2px solid var(--g300);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: var(--g400); z-index: 1;
+    transition: all 0.2s;
+  }
+  .step-item.active .step-circle { border-color: var(--g800); color: var(--g800); background: #fff; }
+  .step-item.done .step-circle { border-color: var(--g800); background: var(--g800); color: #fff; font-size: 12px; }
+  .step-label { font-size: 11px; color: var(--g500); margin-top: 8px; font-weight: 500; text-align: center; }
+  .step-item.active .step-label { color: var(--g800); font-weight: 700; }
+  .step-item.done .step-label { color: var(--g800); font-weight: 600; }
+
+  .upload-card {
+    background: #fff; border: 1px solid var(--g200); margin-bottom: 16px;
+  }
+  .upload-card-hdr {
+    padding: 16px 20px; border-bottom: 1px solid var(--g200);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .upload-card-hdr-icon { font-size: 16px; }
+  .upload-card-title { font-size: 14px; font-weight: 700; }
+  .upload-card-body { padding: 20px; }
+
+  .template-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; background: var(--g050); border: 1px solid var(--g200); margin-bottom: 16px;
+  }
+  .template-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .template-desc { font-size: 11px; color: var(--g600); }
+
+  .field-map-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .field-map-table th {
+    background: var(--g050); padding: 6px 10px; text-align: left;
+    border: 1px solid var(--g200); font-size: 11px; font-weight: 600; color: var(--g600);
+  }
+  .field-map-table td { padding: 6px 10px; border: 1px solid var(--g200); }
+  .req-dot { color: var(--red); font-weight: 700; }
+
+  .upload-zone {
+    border: 2px dashed var(--g300); background: var(--g050);
+    padding: 40px 20px; text-align: center; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--g800); background: #f0f0f0; }
+  .upload-zone input[type="file"] { display: none; }
+  .upload-zone-icon { font-size: 28px; color: var(--g400); margin-bottom: 10px; }
+  .upload-zone-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .upload-zone-sub { font-size: 12px; color: var(--g600); }
+
+  .upload-result { display: none; margin-top: 16px; border: 1px solid var(--g200); }
+  .upload-result.show { display: block; }
+  .upload-result-hdr {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; background: var(--g050); border-bottom: 1px solid var(--g200);
+  }
+  .upload-result-title { font-size: 13px; font-weight: 700; }
+  .upload-result-meta { margin-left: auto; font-size: 12px; color: var(--g600); }
+  .preview-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .preview-table th {
+    background: var(--g050); padding: 7px 10px; text-align: left;
+    border-bottom: 1px solid var(--g200); font-size: 11px; font-weight: 600; color: var(--g500);
+    text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .preview-table td { padding: 7px 10px; border-bottom: 1px solid var(--g200); }
+  .preview-table tr:hover td { background: var(--g050); }
+  .upload-footer { padding: 14px 16px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--g200); }
+
+  /* ── MODAL ── */
+  .modal-dim {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-dim.open { display: flex; }
+  .modal {
+    background: #fff; width: 540px; max-height: 90vh;
+    overflow-y: auto; display: flex; flex-direction: column;
+  }
+  .modal-hdr {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px; border-bottom: 1px solid var(--g200); flex-shrink: 0;
+  }
+  .modal-title { font-size: 16px; font-weight: 700; }
+  .modal-close {
+    background: none; border: none; font-size: 20px; cursor: pointer;
+    color: var(--g500); line-height: 1; padding: 0;
+  }
+  .modal-close:hover { color: var(--g800); }
+  .modal-body { padding: 20px 24px; }
+  .modal-footer {
+    display: flex; justify-content: flex-end; gap: 8px;
+    padding: 14px 24px; border-top: 1px solid var(--g200); flex-shrink: 0;
+  }
+
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    display: block; font-size: 11px; font-weight: 600; color: var(--g600);
+    letter-spacing: 0.2px; text-transform: uppercase; margin-bottom: 5px;
+  }
+  .form-control {
+    width: 100%; border: 1px solid var(--g300); padding: 8px 10px;
+    font-size: 13px; color: var(--g800); outline: none; font-family: inherit; height: 34px;
+  }
+  .form-control:focus { border-color: var(--g800); }
+  .form-control.readonly { background: var(--g050); color: var(--g600); cursor: default; }
+  .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M0 0l5 6 5-6H0z' fill='%238a8a8a'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; cursor: pointer; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: var(--g800); color: #fff; padding: 11px 20px;
+    font-size: 13px; font-weight: 500; display: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    transition: opacity 0.2s;
+  }
+  .toast.show { display: flex; align-items: center; gap: 8px; }
+
+  .empty-state { text-align: center; padding: 60px 24px; }
+  .empty-icon { font-size: 28px; color: var(--g400); margin-bottom: 10px; }
+  .empty-text { font-size: 14px; font-weight: 600; color: var(--g600); margin-bottom: 4px; }
+  .empty-sub { font-size: 12px; color: var(--g500); }
+</style>
+</head>
+<body>
+
+<!-- ══════ HEADER ══════ -->
+<header class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-logo-icon">MS</div>
+    <div class="hdr-logo-text">
+      <div class="hdr-logo-name">MUSINSA STANDARD</div>
+      <div class="hdr-logo-sub">B2B Admin Console</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-user">글로벌사업팀 · <strong>globalteam@musinsa.com</strong></span>
+    <div class="hdr-divider"></div>
+    <button class="btn-hdr-logout">로그아웃</button>
+  </div>
+</header>
+
+<!-- ══════ SIDEBAR ══════ -->
+<aside class="sidebar">
+  <div class="sb-section">
+    <div class="sb-section-label">상품 관리</div>
+    <div class="sb-item active" id="sb-products" onclick="nav('products')">
+      <span class="sb-item-icon">📦</span> 상품 목록
+    </div>
+    <div class="sb-item" id="sb-upload" onclick="nav('upload')">
+      <span class="sb-item-icon">⬆</span> 엑셀 업로드
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-label">주문 관리</div>
+    <div class="sb-item" id="sb-orders" onclick="nav('orders')">
+      <span class="sb-item-icon">📋</span> 주문 조회
+    </div>
+  </div>
+  <div class="sb-footer">© 2026 MUSINSA STANDARD</div>
+</aside>
+
+<!-- ══════ MAIN ══════ -->
+<div class="main">
+
+  <!-- ════ PAGE: 상품 목록 ════ -->
+  <div class="page active" id="page-products">
+    <div class="page-hdr">
+      <div class="page-title-wrap">
+        <div class="page-title">상품 목록</div>
+        <div class="page-subtitle">파트너 포털에 노출되는 시즌 상품을 관리합니다</div>
+      </div>
+    </div>
+
+    <div class="filter-area">
+      <div class="filter-row">
+        <div class="filter-group">
+          <div class="filter-label">스타일번호 / 상품명</div>
+          <input type="text" class="filter-input" id="pf-search" placeholder="검색어 입력">
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">카테고리</div>
+          <select class="filter-select" id="pf-cat">
+            <option value="">전체</option>
+            <option>Tops</option>
+            <option>Bottoms</option>
+            <option>Knitwear</option>
+            <option>Outerwear</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">노출 여부</div>
+          <select class="filter-select" id="pf-vis">
+            <option value="">전체</option>
+            <option value="on">노출</option>
+            <option value="off">숨김</option>
+          </select>
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-primary" onclick="filterProducts()">조회</button>
+          <button class="btn btn-secondary" onclick="resetProductFilter()">초기화</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="table-count">전체 <strong id="p-count">5</strong>건</div>
+      <div class="table-actions">
+        <button class="btn btn-secondary btn-sm" onclick="nav('upload')">⬆ 엑셀 업로드</button>
+        <button class="btn btn-yellow btn-sm">⬇ 엑셀 다운로드</button>
+      </div>
+    </div>
+
+    <div class="bulk-bar" id="p-bulk">
+      <span class="bulk-count" id="p-bulk-count">0건 선택됨</span>
+      <div class="bulk-actions">
+        <button class="btn btn-secondary btn-sm" onclick="bulkVisible(true)">노출로 변경</button>
+        <button class="btn btn-secondary btn-sm" onclick="bulkVisible(false)">숨김으로 변경</button>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th class="center" style="width:36px"><input type="checkbox" id="p-check-all" onchange="toggleAllP(this)"></th>
+            <th style="width:52px">이미지</th>
+            <th>스타일번호</th>
+            <th>상품명</th>
+            <th>색상</th>
+            <th>카테고리</th>
+            <th class="right">홀세일가</th>
+            <th class="right">한국소매가</th>
+            <th>배송일정</th>
+            <th class="center" style="width:64px">노출</th>
+            <th class="center" style="width:56px">관리</th>
+          </tr>
+        </thead>
+        <tbody id="p-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button class="pg-btn disabled">‹</button>
+      <button class="pg-btn active">1</button>
+      <button class="pg-btn" onclick="pgClick(this, 'p-tbody')">2</button>
+      <button class="pg-btn" onclick="pgClick(this, 'p-tbody')">›</button>
+      <select class="pg-size">
+        <option>20건</option><option>50건</option><option>100건</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: 엑셀 업로드 ════ -->
+  <div class="page" id="page-upload">
+    <div class="page-hdr">
+      <div class="page-title-wrap">
+        <div class="page-title">엑셀 업로드</div>
+        <div class="page-subtitle">엑셀 템플릿을 작성하여 상품 데이터를 일괄 등록합니다</div>
+      </div>
+    </div>
+
+    <div class="upload-content">
+      <!-- Step Indicator -->
+      <div class="step-flow" id="step-flow">
+        <div class="step-item active" id="step-1">
+          <div class="step-circle">1</div>
+          <div class="step-label">템플릿 다운로드</div>
+        </div>
+        <div class="step-item" id="step-2">
+          <div class="step-circle">2</div>
+          <div class="step-label">파일 업로드</div>
+        </div>
+        <div class="step-item" id="step-3">
+          <div class="step-circle">3</div>
+          <div class="step-label">결과 확인 및 등록</div>
+        </div>
+      </div>
+
+      <!-- Card 1: Template -->
+      <div class="upload-card">
+        <div class="upload-card-hdr">
+          <span class="upload-card-hdr-icon">📄</span>
+          <span class="upload-card-title">Step 1 · 엑셀 템플릿 다운로드</span>
+        </div>
+        <div class="upload-card-body">
+          <div class="template-row">
+            <div>
+              <div class="template-name">상품 데이터 등록 템플릿 (24FW).xlsx</div>
+              <div class="template-desc">스타일번호, 상품명, 색상, 소재, 원산지, 홀세일가, 한국소매가, 사이즈 구성, 카테고리, 배송일정 포함</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="toast('템플릿 파일이 다운로드됩니다')">⬇ 템플릿 다운로드</button>
+          </div>
+          <div style="font-size:12px;color:var(--g600);line-height:1.8;margin-bottom:16px">
+            <strong style="color:var(--g800)">작성 안내</strong><br>
+            • PLM에서 스타일번호·색상·소재·원산지·사이즈 구성 기본 정보를 추출하여 입력합니다<br>
+            • 상품 이미지는 별도 촬영 후 이미지 파일을 함께 첨부합니다 (현재 PLM에 이미지 없음)<br>
+            • 홀세일가·배송일정 등 동남아 사업부 결정 항목은 내부 협의 후 입력합니다<br>
+            • <span style="color:var(--red)">*</span> 표시 항목은 반드시 입력해야 파트너 포털에 노출됩니다
+          </div>
+
+          <table class="field-map-table">
+            <thead>
+              <tr>
+                <th>컬럼명</th>
+                <th>필수</th>
+                <th>설명</th>
+                <th>데이터 출처</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>스타일번호</td><td><span class="req-dot">*</span></td><td>고유 상품 식별 코드</td><td>PLM</td></tr>
+              <tr><td>상품명</td><td><span class="req-dot">*</span></td><td>가스타일명 기준 (확정명은 입고 D-2개월 전)</td><td>PLM</td></tr>
+              <tr><td>색상</td><td><span class="req-dot">*</span></td><td>색상명 (영문)</td><td>PLM</td></tr>
+              <tr><td>소재</td><td><span class="req-dot">*</span></td><td>원단 구성비 포함 (예: Cotton 100%)</td><td>PLM</td></tr>
+              <tr><td>원산지</td><td><span class="req-dot">*</span></td><td>Country of Origin</td><td>PLM</td></tr>
+              <tr><td>홀세일가 (USD)</td><td>—</td><td>동남아 사업부 결정</td><td>신규 입력</td></tr>
+              <tr><td>한국소매가 (KRW)</td><td><span class="req-dot">*</span></td><td>예판가 기준</td><td>PLM</td></tr>
+              <tr><td>사이즈 구성</td><td><span class="req-dot">*</span></td><td>예: S/M/L 또는 XS/S/M/L</td><td>PLM</td></tr>
+              <tr><td>카테고리</td><td><span class="req-dot">*</span></td><td>Tops / Bottoms / Knitwear / Outerwear 등</td><td>PLM</td></tr>
+              <tr><td>수주회 샘플사이즈</td><td><span class="req-dot">*</span></td><td>현장 샘플 사이즈 표기</td><td>신규 입력</td></tr>
+              <tr><td>배송일정</td><td><span class="req-dot">*</span></td><td>예상 배송일 (YYYY-MM-DD)</td><td>신규 입력</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Card 2: Upload -->
+      <div class="upload-card">
+        <div class="upload-card-hdr">
+          <span class="upload-card-hdr-icon">⬆</span>
+          <span class="upload-card-title">Step 2 · 파일 업로드</span>
+        </div>
+        <div class="upload-card-body">
+          <div class="upload-zone" id="upload-zone"
+            ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event)"
+            onclick="document.getElementById('file-input').click()">
+            <div class="upload-zone-icon" id="uz-icon">📎</div>
+            <div class="upload-zone-title" id="uz-title">파일을 드래그하거나 클릭하여 업로드</div>
+            <div class="upload-zone-sub" id="uz-sub">.xlsx, .xls 파일 지원 · 최대 10MB</div>
+            <input type="file" id="file-input" accept=".xlsx,.xls" onchange="fileSelected(event)">
+          </div>
+
+          <div class="upload-result" id="upload-result">
+            <div class="upload-result-hdr">
+              <span id="ur-icon">✅</span>
+              <span class="upload-result-title" id="ur-title">파일 인식 완료</span>
+              <span class="upload-result-meta" id="ur-meta">총 5건 인식 · 오류 1건</span>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="preview-table">
+                <thead>
+                  <tr>
+                    <th>#</th><th>스타일번호</th><th>상품명</th><th>색상</th>
+                    <th>카테고리</th><th>홀세일가</th><th>배송일정</th><th>상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>1</td><td>24FW-MSST-006</td><td>싱글 브레스티드 코트</td><td>CAMEL</td><td>Outerwear</td><td>$165</td><td>2026-11-15</td><td><span class="badge badge-green">정상</span></td></tr>
+                  <tr><td>2</td><td>24FW-MSST-007</td><td>스트레이트 치노 팬츠</td><td>KHAKI</td><td>Bottoms</td><td>$58</td><td>2026-10-01</td><td><span class="badge badge-green">정상</span></td></tr>
+                  <tr><td>3</td><td>24FW-MSST-008</td><td>터틀넥 니트 스웨터</td><td>IVORY</td><td>Knitwear</td><td>$78</td><td>2026-10-20</td><td><span class="badge badge-green">정상</span></td></tr>
+                  <tr><td>4</td><td>24FW-MSST-009</td><td>볼드 체크 셔츠</td><td>RED CHECK</td><td>Tops</td><td>—</td><td>2026-09-15</td><td><span class="badge badge-yellow">홀세일가 미입력</span></td></tr>
+                  <tr><td>5</td><td>24FW-MSST-010</td><td>후드 집업 점퍼</td><td>CHARCOAL</td><td>Outerwear</td><td>$95</td><td>2026-11-01</td><td><span class="badge badge-green">정상</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="upload-footer">
+              <button class="btn btn-secondary" onclick="cancelUpload()">취소</button>
+              <button class="btn btn-primary" onclick="confirmUpload()">등록 확정</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE: 주문 조회 ════ -->
+  <div class="page" id="page-orders">
+    <div class="page-hdr">
+      <div class="page-title-wrap">
+        <div class="page-title">주문 조회</div>
+        <div class="page-subtitle">파트너가 포털에서 발주한 주문 내역을 관리하고 PO를 처리합니다</div>
+      </div>
+    </div>
+
+    <div class="filter-area">
+      <div class="filter-row">
+        <div class="filter-group">
+          <div class="filter-label">파트너명</div>
+          <input type="text" class="filter-input" id="of-partner" placeholder="파트너명">
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">주문일자</div>
+          <div class="filter-date-range">
+            <input type="date" class="filter-input" style="min-width:132px" value="2026-04-01">
+            <span class="filter-date-sep">~</span>
+            <input type="date" class="filter-input" style="min-width:132px" value="2026-04-13">
+          </div>
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">스타일번호</div>
+          <input type="text" class="filter-input" id="of-style" placeholder="스타일번호">
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">주문 상태</div>
+          <select class="filter-select" id="of-status">
+            <option value="">전체</option>
+            <option>주문접수</option>
+            <option>승인완료</option>
+            <option>생산중</option>
+            <option>QC</option>
+            <option>선적</option>
+            <option>입고완료</option>
+          </select>
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-primary">조회</button>
+          <button class="btn btn-secondary" onclick="resetOrderFilter()">초기화</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="table-count">전체 <strong id="o-count">5</strong>건</div>
+      <div class="table-actions">
+        <button class="btn btn-yellow btn-sm">⬇ 엑셀 다운로드</button>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th class="center" style="width:36px"><input type="checkbox" id="o-check-all" onchange="toggleAllO(this)"></th>
+            <th>주문번호</th>
+            <th>파트너명</th>
+            <th>주문일시</th>
+            <th style="width:48px">이미지</th>
+            <th>스타일번호</th>
+            <th>상품명</th>
+            <th>주문옵션</th>
+            <th class="right">수량</th>
+            <th class="right">주문금액</th>
+            <th style="min-width:180px">PO 번호</th>
+            <th style="min-width:108px">상태</th>
+            <th class="center" style="width:56px">상세</th>
+          </tr>
+        </thead>
+        <tbody id="o-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button class="pg-btn disabled">‹</button>
+      <button class="pg-btn active">1</button>
+      <button class="pg-btn">›</button>
+      <select class="pg-size">
+        <option>20건</option><option>50건</option><option>100건</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: 상품 수정 ══════ -->
+<div class="modal-dim" id="modal-product">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">상품 정보 수정</div>
+      <button class="modal-close" onclick="closeModal('modal-product')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">스타일번호</label>
+          <input class="form-control readonly" id="m-styleNo" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">카테고리</label>
+          <select class="form-control form-select" id="m-cat">
+            <option>Tops</option><option>Bottoms</option><option>Knitwear</option><option>Outerwear</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">상품명 <span style="color:var(--red)">*</span></label>
+        <input class="form-control" id="m-name">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">색상</label>
+          <input class="form-control" id="m-color">
+        </div>
+        <div class="form-group">
+          <label class="form-label">소재</label>
+          <input class="form-control" id="m-material">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">홀세일가 (USD)</label>
+          <input class="form-control" id="m-ws" type="number" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">한국소매가 (KRW)</label>
+          <input class="form-control" id="m-retail" type="number" placeholder="0">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">배송일정</label>
+          <input class="form-control" id="m-delivery" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">노출 여부</label>
+          <select class="form-control form-select" id="m-visible">
+            <option value="1">노출</option>
+            <option value="0">숨김</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-product')">취소</button>
+      <button class="btn btn-primary" onclick="saveProduct()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: 주문 상세 ══════ -->
+<div class="modal-dim" id="modal-order">
+  <div class="modal" style="width:580px">
+    <div class="modal-hdr">
+      <div class="modal-title" id="mo-title">주문 상세</div>
+      <button class="modal-close" onclick="closeModal('modal-order')">×</button>
+    </div>
+    <div class="modal-body" id="mo-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-order')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TOAST ══════ -->
+<div class="toast" id="toast-el"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────
+const PRODUCTS = [
+  { id:1, styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', color:'BLACK',  material:'Cotton 100%',          category:'Tops',      ws:28,  retail:59000,  delivery:'2026-09-30', visible:true  },
+  { id:2, styleNo:'24FW-MSST-002', name:'릴렉스드 데님 팬츠',    color:'INDIGO', material:'Cotton 98%, Elastane 2%',category:'Bottoms',   ws:65,  retail:135000, delivery:'2026-10-15', visible:true  },
+  { id:3, styleNo:'24FW-MSST-003', name:'울 블렌드 크루넥 니트', color:'BEIGE',  material:'Wool 50%, Acrylic 50%', category:'Knitwear',  ws:72,  retail:149000, delivery:'2026-10-30', visible:false },
+  { id:4, styleNo:'24FW-MSST-004', name:'패딩 점퍼',             color:'NAVY',   material:'Nylon 100%',            category:'Outerwear', ws:145, retail:295000, delivery:'2026-11-01', visible:true  },
+  { id:5, styleNo:'24FW-MSST-005', name:'플리스 자켓',           color:'BROWN',  material:'Polyester 100%',        category:'Outerwear', ws:89,  retail:185000, delivery:'2026-11-15', visible:false },
+];
+
+const ORDERS = [
+  { id:'ORD-2026-0001', partner:'Southeast Asia DT Co.',  date:'2026-04-10 14:23', styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', option:'S:10 / M:20 / L:10', qty:40,  amount:1120,  po:'PO-2026-001', status:'승인완료' },
+  { id:'ORD-2026-0002', partner:'Middle East Fashion Ltd.',date:'2026-04-11 09:15', styleNo:'24FW-MSST-002', name:'릴렉스드 데님 팬츠',    option:'S:5 / M:15 / L:8',  qty:28,  amount:1820,  po:'',            status:'주문접수' },
+  { id:'ORD-2026-0003', partner:'Southeast Asia DT Co.',  date:'2026-04-11 16:42', styleNo:'24FW-MSST-004', name:'패딩 점퍼',             option:'S:3 / M:8 / L:4',   qty:15,  amount:2175,  po:'PO-2026-002', status:'생산중'  },
+  { id:'ORD-2026-0004', partner:'KL Retail Partners',     date:'2026-04-12 10:08', styleNo:'24FW-MSST-003', name:'울 블렌드 크루넥 니트', option:'M:10 / L:10',        qty:20,  amount:1440,  po:'',            status:'주문접수' },
+  { id:'ORD-2026-0005', partner:'UAE Fashion Group',      date:'2026-04-12 15:30', styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', option:'S:20 / M:30 / L:20', qty:70,  amount:1960,  po:'',            status:'주문접수' },
+];
+
+const STATUS_BADGE = {
+  '주문접수':'badge-blue', '승인완료':'badge-green', '생산중':'badge-yellow',
+  'QC':'badge-purple', '선적':'badge-gray', '입고완료':'badge-gray',
+};
+
+// ── NAVIGATION ────────────────────────────────────
+function nav(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('sb-' + id).classList.add('active');
+}
+
+// ── RENDER PRODUCTS ───────────────────────────────
+let displayedProducts = [...PRODUCTS];
+
+function renderProducts() {
+  const tbody = document.getElementById('p-tbody');
+  document.getElementById('p-count').textContent = displayedProducts.length;
+  if (!displayedProducts.length) {
+    tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">조회 결과가 없습니다</div><div class="empty-sub">필터 조건을 확인하고 다시 검색해 주세요</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = displayedProducts.map(p => `
+    <tr id="pr-${p.id}">
+      <td class="center"><input type="checkbox" class="p-check" onchange="updateBulkP()"></td>
+      <td><div class="img-box">👕</div></td>
+      <td style="font-weight:600;font-size:12px;font-variant-numeric:tabular-nums;color:var(--g800)">${p.styleNo}</td>
+      <td>${p.name}</td>
+      <td><span class="badge badge-gray" style="font-size:10px">${p.color}</span></td>
+      <td style="color:var(--g600)">${p.category}</td>
+      <td class="right" style="font-weight:600">$${p.ws}</td>
+      <td class="right">₩${p.retail.toLocaleString()}</td>
+      <td style="color:var(--g600)">${p.delivery}</td>
+      <td class="center">
+        <label class="toggle">
+          <input type="checkbox" ${p.visible?'checked':''} onchange="setVisible(${p.id},this.checked)">
+          <span class="toggle-track"></span>
+        </label>
+      </td>
+      <td class="center">
+        <button class="btn btn-secondary btn-sm" onclick='openProductModal(${p.id})'>수정</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterProducts() {
+  const q = document.getElementById('pf-search').value.toLowerCase();
+  const cat = document.getElementById('pf-cat').value;
+  const vis = document.getElementById('pf-vis').value;
+  displayedProducts = PRODUCTS.filter(p => {
+    const mQ = !q || p.styleNo.toLowerCase().includes(q) || p.name.toLowerCase().includes(q);
+    const mC = !cat || p.category === cat;
+    const mV = !vis || (vis==='on' && p.visible) || (vis==='off' && !p.visible);
+    return mQ && mC && mV;
+  });
+  renderProducts();
+}
+
+function resetProductFilter() {
+  document.getElementById('pf-search').value = '';
+  document.getElementById('pf-cat').value = '';
+  document.getElementById('pf-vis').value = '';
+  displayedProducts = [...PRODUCTS];
+  renderProducts();
+}
+
+function setVisible(id, val) {
+  const p = PRODUCTS.find(x => x.id===id);
+  if (p) { p.visible = val; toast(val ? '✅ 노출로 변경되었습니다' : '상품이 숨김 처리되었습니다'); }
+}
+
+// ── BULK ──────────────────────────────────────────
+function toggleAllP(cb) {
+  document.querySelectorAll('.p-check').forEach(c => c.checked = cb.checked);
+  updateBulkP();
+}
+function updateBulkP() {
+  const checked = document.querySelectorAll('.p-check:checked').length;
+  const bar = document.getElementById('p-bulk');
+  document.getElementById('p-bulk-count').textContent = `${checked}건 선택됨`;
+  checked > 0 ? bar.classList.add('show') : bar.classList.remove('show');
+}
+function bulkVisible(val) {
+  document.querySelectorAll('.p-check:checked').forEach(cb => {
+    const row = cb.closest('tr');
+    const id = parseInt(row.id.replace('pr-',''));
+    const p = PRODUCTS.find(x => x.id===id);
+    if (p) p.visible = val;
+  });
+  renderProducts();
+  document.getElementById('p-bulk').classList.remove('show');
+  document.getElementById('p-check-all').checked = false;
+  toast(val ? '✅ 선택 상품을 노출로 변경했습니다' : '선택 상품을 숨김으로 변경했습니다');
+}
+
+// ── PRODUCT MODAL ─────────────────────────────────
+let editId = null;
+function openProductModal(id) {
+  editId = id;
+  const p = PRODUCTS.find(x => x.id===id);
+  document.getElementById('m-styleNo').value  = p.styleNo;
+  document.getElementById('m-name').value     = p.name;
+  document.getElementById('m-color').value    = p.color;
+  document.getElementById('m-material').value = p.material;
+  document.getElementById('m-cat').value      = p.category;
+  document.getElementById('m-ws').value       = p.ws;
+  document.getElementById('m-retail').value   = p.retail;
+  document.getElementById('m-delivery').value = p.delivery;
+  document.getElementById('m-visible').value  = p.visible ? '1' : '0';
+  document.getElementById('modal-product').classList.add('open');
+}
+function saveProduct() {
+  const p = PRODUCTS.find(x => x.id===editId);
+  if (p) {
+    p.name     = document.getElementById('m-name').value;
+    p.color    = document.getElementById('m-color').value;
+    p.material = document.getElementById('m-material').value;
+    p.category = document.getElementById('m-cat').value;
+    p.ws       = Number(document.getElementById('m-ws').value);
+    p.retail   = Number(document.getElementById('m-retail').value);
+    p.delivery = document.getElementById('m-delivery').value;
+    p.visible  = document.getElementById('m-visible').value === '1';
+  }
+  closeModal('modal-product');
+  renderProducts();
+  toast('✅ 상품 정보가 저장되었습니다');
+}
+
+// ── RENDER ORDERS ─────────────────────────────────
+function renderOrders() {
+  const tbody = document.getElementById('o-tbody');
+  document.getElementById('o-count').textContent = ORDERS.length;
+  tbody.innerHTML = ORDERS.map((o, i) => `
+    <tr>
+      <td class="center"><input type="checkbox" class="o-check"></td>
+      <td>
+        <span style="font-size:11px;font-weight:700;color:var(--blue);cursor:pointer" onclick="openOrderModal(${i})">${o.id}</span>
+      </td>
+      <td style="font-weight:500">${o.partner}</td>
+      <td style="font-size:11px;color:var(--g600)">${o.date}</td>
+      <td><div class="img-box">👕</div></td>
+      <td style="font-weight:600;font-size:12px">${o.styleNo}</td>
+      <td>${o.name}</td>
+      <td style="font-size:11px;color:var(--g600)">${o.option}</td>
+      <td class="right" style="font-weight:600">${o.qty.toLocaleString()}pcs</td>
+      <td class="right" style="font-weight:600">$${o.amount.toLocaleString()}</td>
+      <td>
+        <div class="po-cell">
+          <input type="text" class="po-input" id="po-${i}" value="${o.po}" placeholder="PO번호 입력"
+            onblur="autoSavePO(${i})" onkeydown="if(event.key==='Enter')this.blur()">
+        </div>
+      </td>
+      <td>
+        <select class="status-select" onchange="saveStatus(${i},this.value)">
+          ${['주문접수','승인완료','생산중','QC','선적','입고완료'].map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td class="center">
+        <button class="btn btn-secondary btn-sm" onclick="openOrderModal(${i})">상세</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function resetOrderFilter() {
+  document.getElementById('of-partner').value = '';
+  document.getElementById('of-style').value = '';
+  document.getElementById('of-status').value = '';
+  toast('필터가 초기화되었습니다');
+}
+function toggleAllO(cb) { document.querySelectorAll('.o-check').forEach(c => c.checked = cb.checked); }
+
+function autoSavePO(i) {
+  const el = document.getElementById(`po-${i}`);
+  const val = el.value.trim();
+  if (val !== ORDERS[i].po) {
+    ORDERS[i].po = val;
+    el.classList.add('saved');
+    setTimeout(() => el.classList.remove('saved'), 1500);
+    if (val) toast('✅ PO 번호가 저장되었습니다');
+  }
+}
+function saveStatus(i, val) {
+  ORDERS[i].status = val;
+  toast('✅ 상태가 업데이트되었습니다');
+}
+
+function openOrderModal(i) {
+  const o = ORDERS[i];
+  document.getElementById('mo-title').textContent = `주문 상세 · ${o.id}`;
+  document.getElementById('mo-body').innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      ${row('파트너', o.partner)}
+      ${row('주문일시', o.date)}
+      ${row('스타일번호', `<strong>${o.styleNo}</strong>`)}
+      ${row('상품명', o.name)}
+      ${row('주문옵션', o.option)}
+      ${row('주문수량', `<strong>${o.qty.toLocaleString()}pcs</strong>`)}
+      ${row('주문금액', `<strong>$${o.amount.toLocaleString()}</strong>`)}
+      ${row('PO 번호', o.po ? `<strong style="color:var(--blue)">${o.po}</strong>` : '<span style="color:var(--g400)">미입력</span>')}
+      ${row('주문 상태', `<span class="badge ${STATUS_BADGE[o.status]||'badge-gray'}">${o.status}</span>`)}
+    </table>
+  `;
+  document.getElementById('modal-order').classList.add('open');
+}
+function row(label, val) {
+  return `<tr style="border-bottom:1px solid var(--g200)">
+    <td style="padding:10px 0;width:110px;color:var(--g600);font-size:12px;font-weight:600">${label}</td>
+    <td style="padding:10px 0">${val}</td>
+  </tr>`;
+}
+
+// ── UPLOAD ────────────────────────────────────────
+function dzOver(e) { e.preventDefault(); document.getElementById('upload-zone').classList.add('dragover'); }
+function dzLeave(e) { document.getElementById('upload-zone').classList.remove('dragover'); }
+function dzDrop(e) {
+  e.preventDefault();
+  dzLeave();
+  const f = e.dataTransfer.files[0];
+  if (f) processFile(f);
+}
+function fileSelected(e) { const f = e.target.files[0]; if (f) processFile(f); }
+
+function processFile(f) {
+  document.getElementById('uz-icon').textContent = '📊';
+  document.getElementById('uz-title').textContent = f.name;
+  document.getElementById('uz-sub').textContent = `${(f.size/1024).toFixed(1)}KB · 분석 중...`;
+  setTimeout(() => {
+    document.getElementById('uz-sub').textContent = `${(f.size/1024).toFixed(1)}KB · 분석 완료`;
+    document.getElementById('upload-result').classList.add('show');
+    setStep(2);
+  }, 600);
+}
+
+function cancelUpload() {
+  document.getElementById('uz-icon').textContent = '📎';
+  document.getElementById('uz-title').textContent = '파일을 드래그하거나 클릭하여 업로드';
+  document.getElementById('uz-sub').textContent = '.xlsx, .xls 파일 지원 · 최대 10MB';
+  document.getElementById('upload-result').classList.remove('show');
+  document.getElementById('file-input').value = '';
+  setStep(1);
+}
+
+function confirmUpload() {
+  setStep(3);
+  document.querySelector('#upload-result .upload-footer').innerHTML = '';
+  document.getElementById('ur-icon').textContent = '🎉';
+  document.getElementById('ur-title').textContent = '등록 완료';
+  document.getElementById('ur-meta').textContent = '5건 등록 완료 (경고 1건 포함)';
+  document.querySelector('#upload-result .upload-result-hdr').style.background = '#ECFFEC';
+  document.querySelector('#upload-result .upload-result-hdr').style.borderBottomColor = '#c8e6c9';
+  const footer = document.createElement('div');
+  footer.className = 'upload-footer';
+  footer.innerHTML = `
+    <span style="font-size:12px;color:var(--g600);align-self:center">파트너 포털에 즉시 반영됩니다 (노출 ON 기준)</span>
+    <button class="btn btn-secondary" onclick="cancelUpload()">초기화</button>
+    <button class="btn btn-primary" onclick="nav('products')">상품 목록 확인 →</button>
+  `;
+  document.getElementById('upload-result').appendChild(footer);
+  toast('✅ 5개 상품이 등록되었습니다');
+}
+
+function setStep(n) {
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById(`step-${i}`);
+    el.classList.remove('active','done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+    const circle = el.querySelector('.step-circle');
+    circle.textContent = i < n ? '✓' : String(i);
+  }
+}
+
+// ── MODAL ─────────────────────────────────────────
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-dim').forEach(d => {
+  d.addEventListener('click', e => { if (e.target === d) d.classList.remove('open'); });
+});
+
+// ── PAGINATION ────────────────────────────────────
+function pgClick(btn, tbodyId) {
+  btn.closest('.pagination').querySelectorAll('.pg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── TOAST ─────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast-el');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ── INIT ──────────────────────────────────────────
+renderProducts();
+renderOrders();
+</script>
+</body>
+</html>

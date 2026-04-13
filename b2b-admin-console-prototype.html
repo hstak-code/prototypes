@@ -239,15 +239,7 @@
     font-size: 14px; flex-shrink: 0; color: var(--g400);
   }
 
-  /* ── INLINE PO INPUT ── */
-  .po-cell { display: flex; align-items: center; gap: 6px; }
-  .po-input {
-    border: 1px solid var(--g300); padding: 4px 8px; font-size: 12px;
-    width: 120px; outline: none; background: #fff; font-family: inherit;
-    height: 28px;
-  }
-  .po-input:focus { border-color: var(--g800); }
-  .po-input.saved { border-color: #c8e6c9; background: #f9fff9; }
+  /* ── STATUS SELECT ── (inline, no PO input) */
 
   /* ── STATUS SELECT ── */
   .status-select {
@@ -554,7 +546,7 @@
             <th>카테고리</th>
             <th class="right">홀세일가</th>
             <th class="right">한국소매가</th>
-            <th>배송일정</th>
+            <th>배송리드타임</th>
             <th class="center" style="width:64px">노출</th>
             <th class="center" style="width:56px">관리</th>
           </tr>
@@ -610,7 +602,7 @@
           <div class="template-row">
             <div>
               <div class="template-name">상품 데이터 등록 템플릿 (24FW).xlsx</div>
-              <div class="template-desc">스타일번호, 상품명, 색상, 소재, 원산지, 홀세일가, 한국소매가, 사이즈 구성, 카테고리, 배송일정 포함</div>
+              <div class="template-desc">스타일번호, 상품명, 색상, 소재, 원산지, 홀세일가, 한국소매가, 사이즈 구성, 카테고리, 배송리드타임 포함</div>
             </div>
             <button class="btn btn-secondary btn-sm" onclick="toast('템플릿 파일이 다운로드됩니다')">⬇ 템플릿 다운로드</button>
           </div>
@@ -618,7 +610,7 @@
             <strong style="color:var(--g800)">작성 안내</strong><br>
             • PLM에서 스타일번호·색상·소재·원산지·사이즈 구성 기본 정보를 추출하여 입력합니다<br>
             • 상품 이미지는 별도 촬영 후 이미지 파일을 함께 첨부합니다 (현재 PLM에 이미지 없음)<br>
-            • 홀세일가·배송일정 등 동남아 사업부 결정 항목은 내부 협의 후 입력합니다<br>
+            • 홀세일가·배송리드타임 등 동남아 사업부 결정 항목은 내부 협의 후 입력합니다<br>
             • <span style="color:var(--red)">*</span> 표시 항목은 반드시 입력해야 파트너 포털에 노출됩니다
           </div>
 
@@ -641,7 +633,7 @@
               <tr><td>사이즈 구성</td><td><span class="req-dot">*</span></td><td>예: S/M/L 또는 XS/S/M/L</td></tr>
               <tr><td>카테고리</td><td><span class="req-dot">*</span></td><td>Tops / Bottoms / Knitwear / Outerwear 등</td></tr>
               <tr><td>수주회 샘플사이즈</td><td><span class="req-dot">*</span></td><td>현장 샘플 사이즈 표기</td></tr>
-              <tr><td>배송일정</td><td><span class="req-dot">*</span></td><td>예상 배송일 (YYYY-MM-DD)</td></tr>
+              <tr><td>배송리드타임</td><td><span class="req-dot">*</span></td><td>숫자(일 수)만 입력 (예: 30) — 파트너에게 주문일+N일로 배송예정일 표시</td></tr>
             </tbody>
           </table>
         </div>
@@ -674,7 +666,7 @@
                 <thead>
                   <tr>
                     <th>#</th><th>스타일번호</th><th>상품명</th><th>색상</th>
-                    <th>카테고리</th><th>홀세일가</th><th>배송일정</th><th>상태</th>
+                    <th>카테고리</th><th>홀세일가</th><th>배송리드타임</th><th>상태</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -701,7 +693,7 @@
     <div class="page-hdr">
       <div class="page-title-wrap">
         <div class="page-title">주문 조회</div>
-        <div class="page-subtitle">파트너가 포털에서 발주한 주문 내역을 관리하고 PO를 처리합니다</div>
+        <div class="page-subtitle">파트너가 포털에서 발주한 주문 내역을 조회하고 승인 처리합니다</div>
       </div>
     </div>
 
@@ -728,11 +720,7 @@
           <select class="filter-select" id="of-status">
             <option value="">전체</option>
             <option>주문접수</option>
-            <option>승인완료</option>
-            <option>생산중</option>
-            <option>QC</option>
-            <option>선적</option>
-            <option>입고완료</option>
+            <option>주문승인</option>
           </select>
         </div>
         <div class="filter-actions">
@@ -764,7 +752,6 @@
             <th>주문옵션</th>
             <th class="right">수량</th>
             <th class="right">주문금액</th>
-            <th style="min-width:180px">PO 번호</th>
             <th style="min-width:108px">상태</th>
             <th class="center" style="width:56px">상세</th>
           </tr>
@@ -842,8 +829,8 @@
         </div>
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">배송일정</label>
-            <input class="form-control" id="m-delivery" type="date">
+            <label class="form-label">배송리드타임 (일)</label>
+            <input class="form-control" id="m-leadtime" type="number" min="1" placeholder="예: 30">
           </div>
           <div class="form-group">
             <label class="form-label">노출 여부</label>
@@ -880,7 +867,7 @@
 <div class="confirm-dim" id="confirm-dim">
   <div class="confirm-box">
     <div class="confirm-title" id="confirm-title">저장하시겠습니까?</div>
-    <div class="confirm-desc" id="confirm-desc">변경된 PO 번호 및 주문 상태를 저장합니다.</div>
+    <div class="confirm-desc" id="confirm-desc">변경된 주문 상태를 저장합니다.</div>
     <div class="confirm-footer">
       <button class="btn btn-secondary" onclick="confirmCancel()">취소</button>
       <button class="btn btn-primary" id="confirm-ok-btn">저장</button>
@@ -894,24 +881,23 @@
 <script>
 // ── DATA ──────────────────────────────────────────
 const PRODUCTS = [
-  { id:1, styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', color:'BLACK',  material:'Cotton 100%',          category:'Tops',      ws:28,  retail:59000,  delivery:'2026-09-30', visible:true,  img:null },
-  { id:2, styleNo:'24FW-MSST-002', name:'릴렉스드 데님 팬츠',    color:'INDIGO', material:'Cotton 98%, Elastane 2%',category:'Bottoms',   ws:65,  retail:135000, delivery:'2026-10-15', visible:true,  img:null },
-  { id:3, styleNo:'24FW-MSST-003', name:'울 블렌드 크루넥 니트', color:'BEIGE',  material:'Wool 50%, Acrylic 50%', category:'Knitwear',  ws:72,  retail:149000, delivery:'2026-10-30', visible:false, img:null },
-  { id:4, styleNo:'24FW-MSST-004', name:'패딩 점퍼',             color:'NAVY',   material:'Nylon 100%',            category:'Outerwear', ws:145, retail:295000, delivery:'2026-11-01', visible:true,  img:null },
-  { id:5, styleNo:'24FW-MSST-005', name:'플리스 자켓',           color:'BROWN',  material:'Polyester 100%',        category:'Outerwear', ws:89,  retail:185000, delivery:'2026-11-15', visible:false, img:null },
+  { id:1, styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', color:'BLACK',  material:'Cotton 100%',          category:'Tops',      ws:28,  retail:59000,  leadTime:30,  visible:true,  img:null },
+  { id:2, styleNo:'24FW-MSST-002', name:'릴렉스드 데님 팬츠',    color:'INDIGO', material:'Cotton 98%, Elastane 2%',category:'Bottoms',   ws:65,  retail:135000, leadTime:45,  visible:true,  img:null },
+  { id:3, styleNo:'24FW-MSST-003', name:'울 블렌드 크루넥 니트', color:'BEIGE',  material:'Wool 50%, Acrylic 50%', category:'Knitwear',  ws:72,  retail:149000, leadTime:60,  visible:false, img:null },
+  { id:4, styleNo:'24FW-MSST-004', name:'패딩 점퍼',             color:'NAVY',   material:'Nylon 100%',            category:'Outerwear', ws:145, retail:295000, leadTime:75,  visible:true,  img:null },
+  { id:5, styleNo:'24FW-MSST-005', name:'플리스 자켓',           color:'BROWN',  material:'Polyester 100%',        category:'Outerwear', ws:89,  retail:185000, leadTime:75,  visible:false, img:null },
 ];
 
 const ORDERS = [
-  { id:'ORD-2026-0001', partner:'Southeast Asia DT Co.',  date:'2026-04-10 14:23', styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', option:'S:10 / M:20 / L:10', qty:40,  amount:1120,  po:'PO-2026-001', status:'승인완료' },
-  { id:'ORD-2026-0002', partner:'Middle East Fashion Ltd.',date:'2026-04-11 09:15', styleNo:'24FW-MSST-002', name:'릴렉스드 데님 팬츠',    option:'S:5 / M:15 / L:8',  qty:28,  amount:1820,  po:'',            status:'주문접수' },
-  { id:'ORD-2026-0003', partner:'Southeast Asia DT Co.',  date:'2026-04-11 16:42', styleNo:'24FW-MSST-004', name:'패딩 점퍼',             option:'S:3 / M:8 / L:4',   qty:15,  amount:2175,  po:'PO-2026-002', status:'생산중'  },
-  { id:'ORD-2026-0004', partner:'KL Retail Partners',     date:'2026-04-12 10:08', styleNo:'24FW-MSST-003', name:'울 블렌드 크루넥 니트', option:'M:10 / L:10',        qty:20,  amount:1440,  po:'',            status:'주문접수' },
-  { id:'ORD-2026-0005', partner:'UAE Fashion Group',      date:'2026-04-12 15:30', styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', option:'S:20 / M:30 / L:20', qty:70,  amount:1960,  po:'',            status:'주문접수' },
+  { id:'ORD-2026-0001', partner:'Southeast Asia DT Co.',  date:'2026-04-10 14:23', styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', option:'S:10 / M:20 / L:10', qty:40,  amount:1120,  status:'주문승인' },
+  { id:'ORD-2026-0002', partner:'Middle East Fashion Ltd.',date:'2026-04-11 09:15', styleNo:'24FW-MSST-002', name:'릴렉스드 데님 팬츠',    option:'S:5 / M:15 / L:8',  qty:28,  amount:1820,  status:'주문접수' },
+  { id:'ORD-2026-0003', partner:'Southeast Asia DT Co.',  date:'2026-04-11 16:42', styleNo:'24FW-MSST-004', name:'패딩 점퍼',             option:'S:3 / M:8 / L:4',   qty:15,  amount:2175,  status:'주문승인' },
+  { id:'ORD-2026-0004', partner:'KL Retail Partners',     date:'2026-04-12 10:08', styleNo:'24FW-MSST-003', name:'울 블렌드 크루넥 니트', option:'M:10 / L:10',        qty:20,  amount:1440,  status:'주문접수' },
+  { id:'ORD-2026-0005', partner:'UAE Fashion Group',      date:'2026-04-12 15:30', styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', option:'S:20 / M:30 / L:20', qty:70,  amount:1960,  status:'주문접수' },
 ];
 
 const STATUS_BADGE = {
-  '주문접수':'badge-blue', '승인완료':'badge-green', '생산중':'badge-yellow',
-  'QC':'badge-purple', '선적':'badge-gray', '입고완료':'badge-gray',
+  '주문접수':'badge-blue', '주문승인':'badge-green',
 };
 
 // ── NAVIGATION ────────────────────────────────────
@@ -942,7 +928,7 @@ function renderProducts() {
       <td style="color:var(--g600)">${p.category}</td>
       <td class="right" style="font-weight:600">$${p.ws}</td>
       <td class="right">₩${p.retail.toLocaleString()}</td>
-      <td style="color:var(--g600)">${p.delivery}</td>
+      <td style="color:var(--g600)">D+${p.leadTime}일</td>
       <td class="center">
         <label class="toggle">
           <input type="checkbox" ${p.visible?'checked':''} onchange="setVisible(${p.id},this.checked)">
@@ -1021,7 +1007,7 @@ function openProductModal(id) {
   document.getElementById('m-cat').value      = p.category;
   document.getElementById('m-ws').value       = p.ws;
   document.getElementById('m-retail').value   = p.retail;
-  document.getElementById('m-delivery').value = p.delivery;
+  document.getElementById('m-leadtime').value = p.leadTime;
   document.getElementById('m-visible').value  = p.visible ? '1' : '0';
   document.getElementById('m-img-input').value = '';
   const area = document.getElementById('m-img-area');
@@ -1053,7 +1039,7 @@ function saveProduct() {
     p.category = document.getElementById('m-cat').value;
     p.ws       = Number(document.getElementById('m-ws').value);
     p.retail   = Number(document.getElementById('m-retail').value);
-    p.delivery = document.getElementById('m-delivery').value;
+    p.leadTime = Number(document.getElementById('m-leadtime').value);
     p.visible  = document.getElementById('m-visible').value === '1';
     if (pendingImgDataUrl) p.img = pendingImgDataUrl;
   }
@@ -1081,14 +1067,8 @@ function renderOrders() {
       <td class="right" style="font-weight:600">${o.qty.toLocaleString()}pcs</td>
       <td class="right" style="font-weight:600">$${o.amount.toLocaleString()}</td>
       <td>
-        <div class="po-cell">
-          <input type="text" class="po-input" id="po-${i}" value="${o.po}" placeholder="PO번호 입력"
-            oninput="markOrderDirty()">
-        </div>
-      </td>
-      <td>
         <select class="status-select" id="st-${i}" onchange="markOrderDirty()">
-          ${['주문접수','승인완료','생산중','QC','선적','입고완료'].map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}
+          ${['주문접수','주문승인'].map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}
         </select>
       </td>
       <td class="center">
@@ -1117,12 +1097,10 @@ function markOrderDirty() {
 function saveOrderChanges() {
   showConfirm(
     '변경사항을 저장하시겠습니까?',
-    '수정된 PO 번호 및 주문 상태가 저장됩니다.',
+    '변경된 주문 상태를 저장합니다.',
     function() {
       ORDERS.forEach((o, i) => {
-        const poEl = document.getElementById(`po-${i}`);
         const stEl = document.getElementById(`st-${i}`);
-        if (poEl) o.po = poEl.value.trim();
         if (stEl) o.status = stEl.value;
       });
       ordersDirty = false;
@@ -1144,7 +1122,6 @@ function openOrderModal(i) {
       ${row('주문옵션', o.option)}
       ${row('주문수량', `<strong>${o.qty.toLocaleString()}pcs</strong>`)}
       ${row('주문금액', `<strong>$${o.amount.toLocaleString()}</strong>`)}
-      ${row('PO 번호', o.po ? `<strong style="color:var(--blue)">${o.po}</strong>` : '<span style="color:var(--g400)">미입력</span>')}
       ${row('주문 상태', `<span class="badge ${STATUS_BADGE[o.status]||'badge-gray'}">${o.status}</span>`)}
     </table>
   `;

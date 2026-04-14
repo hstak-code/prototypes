@@ -463,7 +463,7 @@
       <span class="sb-item-icon">📦</span> 상품 목록
     </div>
     <div class="sb-item" id="sb-upload" onclick="nav('upload')">
-      <span class="sb-item-icon">⬆</span> 엑셀 업로드
+      <span class="sb-item-icon">📝</span> 상품등록
     </div>
   </div>
   <div class="sb-section">
@@ -521,8 +521,9 @@
     <div class="table-toolbar">
       <div class="table-count">전체 <strong id="p-count">5</strong>건</div>
       <div class="table-actions">
-        <button class="btn btn-secondary btn-sm" onclick="nav('upload')">⬆ 엑셀 업로드</button>
-        <button class="btn btn-yellow btn-sm">⬇ 엑셀 다운로드</button>
+        <button class="btn btn-yellow btn-sm" onclick="downloadExcelTemplate()">⬇ 엑셀템플릿 다운로드</button>
+        <button class="btn btn-secondary btn-sm" onclick="openBulkEditModal()">⬆ 일괄수정 업로드</button>
+        <button class="btn btn-yellow btn-sm" onclick="downloadProductInfo()">⬇ 상품정보 다운로드</button>
       </div>
     </div>
 
@@ -566,11 +567,11 @@
     </div>
   </div>
 
-  <!-- ════ PAGE: 엑셀 업로드 ════ -->
+  <!-- ════ PAGE: 상품등록 ════ -->
   <div class="page" id="page-upload">
     <div class="page-hdr">
       <div class="page-title-wrap">
-        <div class="page-title">엑셀 업로드</div>
+        <div class="page-title">상품등록</div>
         <div class="page-subtitle">엑셀 템플릿을 작성하여 상품 데이터를 일괄 등록합니다</div>
       </div>
     </div>
@@ -871,6 +872,33 @@
     <div class="confirm-footer">
       <button class="btn btn-secondary" onclick="confirmCancel()">취소</button>
       <button class="btn btn-primary" id="confirm-ok-btn">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: 일괄수정 업로드 ══════ -->
+<div class="modal-dim" id="modal-bulk-edit">
+  <div class="modal" style="width:480px">
+    <div class="modal-hdr">
+      <div class="modal-title">일괄수정 업로드</div>
+      <button class="modal-close" onclick="closeModal('modal-bulk-edit')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--g600);margin-bottom:16px;line-height:1.6">
+        상품번호 기준으로 일괄 수정합니다.<br>
+        수정 가능 항목: 상품번호·상품명·상품 노출여부·홀세일가·한국소매가·배송리드타임·HS Code
+      </p>
+      <div style="border:1.5px dashed var(--g300);border-radius:4px;padding:32px 24px;text-align:center;background:var(--g050);cursor:pointer;position:relative" onclick="document.getElementById('bulk-file-input').click()" id="bulk-drop-area">
+        <div style="font-size:28px;margin-bottom:8px">📂</div>
+        <div style="font-size:13px;font-weight:600;color:var(--g700);margin-bottom:4px" id="bulk-file-name">엑셀 파일을 선택하세요</div>
+        <div style="font-size:11px;color:var(--g500)">.xlsx 파일만 지원합니다 · 상품번호 필수</div>
+        <input type="file" id="bulk-file-input" accept=".xlsx,.xls" style="display:none" onchange="onBulkFileSelect(this)">
+      </div>
+      <div id="bulk-file-info" style="display:none;margin-top:12px;padding:10px 14px;background:#f0fff4;border:1px solid #c6f6d5;font-size:12px;color:#276749;border-radius:2px"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-bulk-edit')">취소</button>
+      <button class="btn btn-primary" id="bulk-upload-btn" onclick="submitBulkEdit()" disabled>업로드</button>
     </div>
   </div>
 </div>
@@ -1223,6 +1251,37 @@ document.querySelectorAll('.modal-dim').forEach(d => {
 function pgClick(btn, tbodyId) {
   btn.closest('.pagination').querySelectorAll('.pg-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+}
+
+// ── BULK EDIT ─────────────────────────────────────
+function openBulkEditModal() {
+  document.getElementById('bulk-file-name').textContent = '엑셀 파일을 선택하세요';
+  document.getElementById('bulk-file-info').style.display = 'none';
+  document.getElementById('bulk-upload-btn').disabled = true;
+  document.getElementById('bulk-file-input').value = '';
+  document.getElementById('modal-bulk-edit').classList.add('open');
+}
+
+function onBulkFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('bulk-file-name').textContent = file.name;
+  document.getElementById('bulk-file-info').style.display = 'block';
+  document.getElementById('bulk-file-info').textContent = `선택된 파일: ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+  document.getElementById('bulk-upload-btn').disabled = false;
+}
+
+function submitBulkEdit() {
+  closeModal('modal-bulk-edit');
+  toast('일괄수정 업로드가 완료되었습니다.');
+}
+
+function downloadExcelTemplate() {
+  toast('엑셀템플릿 다운로드를 시작합니다. (상품번호·상품명·노출여부·홀세일가·한국소매가·배송리드타임·HS Code)');
+}
+
+function downloadProductInfo() {
+  toast('상품정보 엑셀 다운로드를 시작합니다.');
 }
 
 // ── TOAST ─────────────────────────────────────────

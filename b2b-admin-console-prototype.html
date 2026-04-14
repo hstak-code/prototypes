@@ -465,6 +465,9 @@
     <div class="sb-item" id="sb-upload" onclick="nav('upload')">
       <span class="sb-item-icon">📝</span> 상품등록
     </div>
+    <div class="sb-item" id="sb-partners" onclick="nav('partners')">
+      <span class="sb-item-icon">💲</span> 파트너 할인율
+    </div>
   </div>
   <div class="sb-section">
     <div class="sb-section-label">주문 관리</div>
@@ -545,7 +548,7 @@
             <th>상품명</th>
             <th>색상</th>
             <th>카테고리</th>
-            <th class="right">홀세일가</th>
+            <th class="right" style="cursor:default">홀세일가 (파트너별)</th>
             <th class="right">한국소매가</th>
             <th>배송리드타임</th>
             <th class="center" style="width:64px">노출</th>
@@ -603,7 +606,7 @@
           <div class="template-row">
             <div>
               <div class="template-name">상품 데이터 등록 템플릿 (24FW).xlsx</div>
-              <div class="template-desc">스타일번호, 상품명, 색상, 소재, 원산지, 홀세일가, 한국소매가, 사이즈 구성, 카테고리, 배송리드타임 포함</div>
+              <div class="template-desc">스타일번호, 상품명, 색상, 소재, 원산지, 한국소매가, 사이즈 구성, 카테고리, 배송리드타임 포함 (홀세일가는 자동계산)</div>
             </div>
             <button class="btn btn-secondary btn-sm" onclick="toast('템플릿 파일이 다운로드됩니다')">⬇ 템플릿 다운로드</button>
           </div>
@@ -611,7 +614,8 @@
             <strong style="color:var(--g800)">작성 안내</strong><br>
             • PLM에서 스타일번호·색상·소재·원산지·사이즈 구성 기본 정보를 추출하여 입력합니다<br>
             • 상품 이미지는 별도 촬영 후 이미지 파일을 함께 첨부합니다 (현재 PLM에 이미지 없음)<br>
-            • 홀세일가·배송리드타임 등 동남아 사업부 결정 항목은 내부 협의 후 입력합니다<br>
+            • 배송리드타임 등 동남아 사업부 결정 항목은 내부 협의 후 입력합니다<br>
+            • 홀세일가는 한국소매가 기준 환율 자동계산 + 파트너별 할인율 적용으로 산출됩니다 (별도 입력 불필요)<br>
             • <span style="color:var(--red)">*</span> 표시 항목은 반드시 입력해야 파트너 포털에 노출됩니다
           </div>
 
@@ -629,8 +633,7 @@
               <tr><td>색상</td><td><span class="req-dot">*</span></td><td>색상명 (영문)</td></tr>
               <tr><td>소재</td><td><span class="req-dot">*</span></td><td>원단 구성비 포함 (예: Cotton 100%)</td></tr>
               <tr><td>원산지</td><td><span class="req-dot">*</span></td><td>Country of Origin</td></tr>
-              <tr><td>홀세일가 (USD)</td><td>—</td><td>동남아 사업부 결정</td></tr>
-              <tr><td>한국소매가 (KRW)</td><td><span class="req-dot">*</span></td><td>예판가 기준</td></tr>
+              <tr><td>한국소매가 (KRW)</td><td><span class="req-dot">*</span></td><td>예판가 기준 (홀세일가는 이 값 기준 환율 자동계산)</td></tr>
               <tr><td>사이즈 구성</td><td><span class="req-dot">*</span></td><td>예: S/M/L 또는 XS/S/M/L</td></tr>
               <tr><td>카테고리</td><td><span class="req-dot">*</span></td><td>Tops / Bottoms / Knitwear / Outerwear 등</td></tr>
               <tr><td>수주회 샘플사이즈</td><td><span class="req-dot">*</span></td><td>현장 샘플 사이즈 표기</td></tr>
@@ -667,15 +670,15 @@
                 <thead>
                   <tr>
                     <th>#</th><th>스타일번호</th><th>상품명</th><th>색상</th>
-                    <th>카테고리</th><th>홀세일가</th><th>배송리드타임</th><th>상태</th>
+                    <th>카테고리</th><th class="right">한국소매가</th><th>배송리드타임</th><th>상태</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr><td>1</td><td>24FW-MSST-006</td><td>싱글 브레스티드 코트</td><td>CAMEL</td><td>Outerwear</td><td>$165</td><td>2026-11-15</td><td><span class="badge badge-green">정상</span></td></tr>
-                  <tr><td>2</td><td>24FW-MSST-007</td><td>스트레이트 치노 팬츠</td><td>KHAKI</td><td>Bottoms</td><td>$58</td><td>2026-10-01</td><td><span class="badge badge-green">정상</span></td></tr>
-                  <tr><td>3</td><td>24FW-MSST-008</td><td>터틀넥 니트 스웨터</td><td>IVORY</td><td>Knitwear</td><td>$78</td><td>2026-10-20</td><td><span class="badge badge-green">정상</span></td></tr>
-                  <tr><td>4</td><td>24FW-MSST-009</td><td>볼드 체크 셔츠</td><td>RED CHECK</td><td>Tops</td><td>—</td><td>2026-09-15</td><td><span class="badge badge-yellow">홀세일가 미입력</span></td></tr>
-                  <tr><td>5</td><td>24FW-MSST-010</td><td>후드 집업 점퍼</td><td>CHARCOAL</td><td>Outerwear</td><td>$95</td><td>2026-11-01</td><td><span class="badge badge-green">정상</span></td></tr>
+                  <tr><td>1</td><td>24FW-MSST-006</td><td>싱글 브레스티드 코트</td><td>CAMEL</td><td>Outerwear</td><td style="text-align:right">₩359,000</td><td>2026-11-15</td><td><span class="badge badge-green">정상</span></td></tr>
+                  <tr><td>2</td><td>24FW-MSST-007</td><td>스트레이트 치노 팬츠</td><td>KHAKI</td><td>Bottoms</td><td style="text-align:right">₩129,000</td><td>2026-10-01</td><td><span class="badge badge-green">정상</span></td></tr>
+                  <tr><td>3</td><td>24FW-MSST-008</td><td>터틀넥 니트 스웨터</td><td>IVORY</td><td>Knitwear</td><td style="text-align:right">₩169,000</td><td>2026-10-20</td><td><span class="badge badge-green">정상</span></td></tr>
+                  <tr><td>4</td><td>24FW-MSST-009</td><td>볼드 체크 셔츠</td><td>RED CHECK</td><td>Tops</td><td style="text-align:right">—</td><td>2026-09-15</td><td><span class="badge badge-yellow">한국소매가 미입력</span></td></tr>
+                  <tr><td>5</td><td>24FW-MSST-010</td><td>후드 집업 점퍼</td><td>CHARCOAL</td><td>Outerwear</td><td style="text-align:right">₩205,000</td><td>2026-11-01</td><td><span class="badge badge-green">정상</span></td></tr>
                 </tbody>
               </table>
             </div>
@@ -770,6 +773,54 @@
       </select>
     </div>
   </div>
+
+  <!-- ════ PAGE: 파트너 할인율 ════ -->
+  <div class="page" id="page-partners">
+    <div class="page-hdr">
+      <div class="page-title-wrap">
+        <div class="page-title">파트너 할인율 관리</div>
+        <div class="page-subtitle">파트너별 홀세일가 할인율을 설정합니다. 변경 즉시 파트너 포털 노출 가격에 반영됩니다</div>
+      </div>
+      <div class="page-hdr-actions">
+        <button class="btn btn-primary btn-sm" onclick="savePartnerRates()">💾 저장</button>
+      </div>
+    </div>
+
+    <div style="padding:16px 24px;background:var(--g050);border-bottom:1px solid var(--g200);flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:24px">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:4px">적용 환율 (KRW/USD)</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <strong style="font-size:20px;font-variant-numeric:tabular-nums">₩<span id="ex-rate-display">1,350</span></strong>
+            <button class="btn btn-secondary btn-sm" onclick="editExchangeRate()">수정</button>
+          </div>
+          <div style="font-size:11px;color:var(--g500);margin-top:3px">최종 업데이트: 2026-04-01 · 홀세일가 계산 기준 환율</div>
+        </div>
+        <div style="width:1px;height:56px;background:var(--g200)"></div>
+        <div style="font-size:12px;color:var(--g600);line-height:2">
+          <strong style="color:var(--g800)">계산 공식</strong><br>
+          홀세일가(USD) = 한국소매가(KRW) ÷ 환율(KRW/USD) × (1 − 파트너할인율)
+        </div>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>파트너 ID</th>
+            <th>파트너명</th>
+            <th>이메일</th>
+            <th class="center" style="width:120px">할인율 (%)</th>
+            <th class="right" style="min-width:200px">샘플 홀세일가 계산 (오버사이즈 코튼 티셔츠 기준)</th>
+            <th class="center" style="width:100px">최종수정일</th>
+          </tr>
+        </thead>
+        <tbody id="partners-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══════ MODAL: 상품 수정 ══════ -->
@@ -818,15 +869,10 @@
             <input class="form-control" id="m-material">
           </div>
         </div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">홀세일가 (USD)</label>
-            <input class="form-control" id="m-ws" type="number" placeholder="0">
-          </div>
-          <div class="form-group">
-            <label class="form-label">한국소매가 (KRW)</label>
-            <input class="form-control" id="m-retail" type="number" placeholder="0">
-          </div>
+        <div class="form-group">
+          <label class="form-label">한국소매가 (KRW) <span style="color:var(--red)">*</span></label>
+          <input class="form-control" id="m-retail" type="number" placeholder="0">
+          <div style="font-size:11px;color:var(--g500);margin-top:4px">홀세일가는 한국소매가 기준 환율 자동계산 + 파트너별 할인율 적용으로 산출됩니다</div>
         </div>
         <div class="form-grid">
           <div class="form-group">
@@ -876,6 +922,20 @@
   </div>
 </div>
 
+<!-- ══════ MODAL: 홀세일가 파트너별 ══════ -->
+<div class="modal-dim" id="modal-wholesale">
+  <div class="modal" style="width:520px">
+    <div class="modal-hdr">
+      <div class="modal-title" id="wm-title">홀세일가 — 파트너별</div>
+      <button class="modal-close" onclick="closeModal('modal-wholesale')">×</button>
+    </div>
+    <div class="modal-body" id="wm-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-wholesale')">닫기</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══════ MODAL: 일괄수정 업로드 ══════ -->
 <div class="modal-dim" id="modal-bulk-edit">
   <div class="modal" style="width:480px">
@@ -886,7 +946,7 @@
     <div class="modal-body">
       <p style="font-size:12px;color:var(--g600);margin-bottom:16px;line-height:1.6">
         상품번호 기준으로 일괄 수정합니다.<br>
-        수정 가능 항목: 상품번호·상품명·상품 노출여부·홀세일가·한국소매가·배송리드타임·HS Code
+        수정 가능 항목: 상품번호·상품명·상품 노출여부·한국소매가·배송리드타임·HS Code
       </p>
       <div style="border:1.5px dashed var(--g300);border-radius:4px;padding:32px 24px;text-align:center;background:var(--g050);cursor:pointer;position:relative" onclick="document.getElementById('bulk-file-input').click()" id="bulk-drop-area">
         <div style="font-size:28px;margin-bottom:8px">📂</div>
@@ -908,12 +968,25 @@
 
 <script>
 // ── DATA ──────────────────────────────────────────
+const EXCHANGE_RATE = { krwPerUsd: 1350, effectiveDate: '2026-04-01' };
+
+const PARTNERS = [
+  { id:'PTR-001', name:'Southeast Asia DT Co.',   discountRate: 0.30, email:'se-asia@partner.com' },
+  { id:'PTR-002', name:'Middle East Fashion Ltd.', discountRate: 0.35, email:'me-fashion@partner.com' },
+  { id:'PTR-003', name:'KL Retail Partners',       discountRate: 0.28, email:'kl-retail@partner.com' },
+  { id:'PTR-004', name:'UAE Fashion Group',         discountRate: 0.32, email:'uae-fashion@partner.com' },
+];
+
+function calcWholesale(retailKrw, discountRate) {
+  return (retailKrw / EXCHANGE_RATE.krwPerUsd * (1 - discountRate)).toFixed(2);
+}
+
 const PRODUCTS = [
-  { id:1, styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', color:'BLACK',  material:'Cotton 100%',          category:'Tops',      ws:28,  retail:59000,  leadTime:30,  visible:true,  img:null },
-  { id:2, styleNo:'24FW-MSST-002', name:'릴렉스드 데님 팬츠',    color:'INDIGO', material:'Cotton 98%, Elastane 2%',category:'Bottoms',   ws:65,  retail:135000, leadTime:45,  visible:true,  img:null },
-  { id:3, styleNo:'24FW-MSST-003', name:'울 블렌드 크루넥 니트', color:'BEIGE',  material:'Wool 50%, Acrylic 50%', category:'Knitwear',  ws:72,  retail:149000, leadTime:60,  visible:false, img:null },
-  { id:4, styleNo:'24FW-MSST-004', name:'패딩 점퍼',             color:'NAVY',   material:'Nylon 100%',            category:'Outerwear', ws:145, retail:295000, leadTime:75,  visible:true,  img:null },
-  { id:5, styleNo:'24FW-MSST-005', name:'플리스 자켓',           color:'BROWN',  material:'Polyester 100%',        category:'Outerwear', ws:89,  retail:185000, leadTime:75,  visible:false, img:null },
+  { id:1, styleNo:'24FW-MSST-001', name:'오버사이즈 코튼 티셔츠', color:'BLACK',  material:'Cotton 100%',          category:'Tops',      retail:59000,  leadTime:30,  visible:true,  img:null },
+  { id:2, styleNo:'24FW-MSST-002', name:'릴렉스드 데님 팬츠',    color:'INDIGO', material:'Cotton 98%, Elastane 2%',category:'Bottoms',   retail:135000, leadTime:45,  visible:true,  img:null },
+  { id:3, styleNo:'24FW-MSST-003', name:'울 블렌드 크루넥 니트', color:'BEIGE',  material:'Wool 50%, Acrylic 50%', category:'Knitwear',  retail:149000, leadTime:60,  visible:false, img:null },
+  { id:4, styleNo:'24FW-MSST-004', name:'패딩 점퍼',             color:'NAVY',   material:'Nylon 100%',            category:'Outerwear', retail:295000, leadTime:75,  visible:true,  img:null },
+  { id:5, styleNo:'24FW-MSST-005', name:'플리스 자켓',           color:'BROWN',  material:'Polyester 100%',        category:'Outerwear', retail:185000, leadTime:75,  visible:false, img:null },
 ];
 
 const ORDERS = [
@@ -934,6 +1007,7 @@ function nav(id) {
   document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   document.getElementById('sb-' + id).classList.add('active');
+  if (id === 'partners') renderPartners();
 }
 
 // ── RENDER PRODUCTS ───────────────────────────────
@@ -954,7 +1028,7 @@ function renderProducts() {
       <td>${p.name}</td>
       <td><span class="badge badge-gray" style="font-size:10px">${p.color}</span></td>
       <td style="color:var(--g600)">${p.category}</td>
-      <td class="right" style="font-weight:600">$${p.ws}</td>
+      <td class="right"><span onclick="openWholesaleModal(${p.id})" style="color:var(--blue);cursor:pointer;font-weight:600;font-size:11px;text-decoration:underline;text-underline-offset:2px">파트너별 보기</span></td>
       <td class="right">₩${p.retail.toLocaleString()}</td>
       <td style="color:var(--g600)">D+${p.leadTime}일</td>
       <td class="center">
@@ -1033,7 +1107,6 @@ function openProductModal(id) {
   document.getElementById('m-color').value    = p.color;
   document.getElementById('m-material').value = p.material;
   document.getElementById('m-cat').value      = p.category;
-  document.getElementById('m-ws').value       = p.ws;
   document.getElementById('m-retail').value   = p.retail;
   document.getElementById('m-leadtime').value = p.leadTime;
   document.getElementById('m-visible').value  = p.visible ? '1' : '0';
@@ -1065,7 +1138,6 @@ function saveProduct() {
     p.color    = document.getElementById('m-color').value;
     p.material = document.getElementById('m-material').value;
     p.category = document.getElementById('m-cat').value;
-    p.ws       = Number(document.getElementById('m-ws').value);
     p.retail   = Number(document.getElementById('m-retail').value);
     p.leadTime = Number(document.getElementById('m-leadtime').value);
     p.visible  = document.getElementById('m-visible').value === '1';
@@ -1277,7 +1349,7 @@ function submitBulkEdit() {
 }
 
 function downloadExcelTemplate() {
-  toast('엑셀템플릿 다운로드를 시작합니다. (상품번호·상품명·노출여부·홀세일가·한국소매가·배송리드타임·HS Code)');
+  toast('엑셀템플릿 다운로드를 시작합니다. (상품번호·상품명·노출여부·한국소매가·배송리드타임·HS Code)');
 }
 
 function downloadProductInfo() {
@@ -1292,6 +1364,81 @@ function toast(msg) {
   el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ── WHOLESALE PRICE MODAL ─────────────────────────
+function openWholesaleModal(pid) {
+  const p = PRODUCTS.find(x => x.id===pid);
+  document.getElementById('wm-title').textContent = `홀세일가 — ${p.styleNo}`;
+  document.getElementById('wm-body').innerHTML = `
+    <div style="font-size:12px;color:var(--g600);margin-bottom:14px;padding:10px 14px;background:var(--g050);border:1px solid var(--g200);line-height:1.9">
+      <strong style="color:var(--g800)">${p.name} / ${p.color}</strong><br>
+      한국소매가 <strong style="color:var(--g800)">₩${p.retail.toLocaleString()}</strong> · 적용 환율 <strong style="color:var(--g800)">₩${EXCHANGE_RATE.krwPerUsd.toLocaleString()}/USD</strong> (${EXCHANGE_RATE.effectiveDate} 기준)<br>
+      <span style="color:var(--g500)">홀세일가(USD) = 한국소매가 ÷ 환율 × (1 − 파트너할인율)</span>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead>
+        <tr style="background:var(--g050);border-bottom:1px solid var(--g200)">
+          <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--g500);font-size:11px;text-transform:uppercase;letter-spacing:0.3px">파트너</th>
+          <th style="padding:8px 12px;text-align:center;font-weight:600;color:var(--g500);font-size:11px;text-transform:uppercase;letter-spacing:0.3px">할인율</th>
+          <th style="padding:8px 12px;text-align:right;font-weight:600;color:var(--g500);font-size:11px;text-transform:uppercase;letter-spacing:0.3px">홀세일가 (USD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${PARTNERS.map(pt => `
+          <tr style="border-bottom:1px solid var(--g200)">
+            <td style="padding:10px 12px;font-weight:500">${pt.name}</td>
+            <td style="padding:10px 12px;text-align:center"><span class="badge badge-yellow">${(pt.discountRate*100).toFixed(0)}% 할인</span></td>
+            <td style="padding:10px 12px;text-align:right;font-weight:700;font-size:13px;color:var(--g800)">$${calcWholesale(p.retail, pt.discountRate)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+  document.getElementById('modal-wholesale').classList.add('open');
+}
+
+// ── PARTNERS PAGE ─────────────────────────────────
+function renderPartners() {
+  const sampleProduct = PRODUCTS[0];
+  document.getElementById('partners-tbody').innerHTML = PARTNERS.map((pt, i) => `
+    <tr>
+      <td style="font-size:11px;color:var(--g500)">${pt.id}</td>
+      <td style="font-weight:600">${pt.name}</td>
+      <td style="font-size:12px;color:var(--g600)">${pt.email}</td>
+      <td class="center">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+          <input type="number" class="form-control" style="width:64px;text-align:center;height:28px;font-size:12px;padding:0 6px"
+            value="${(pt.discountRate*100).toFixed(0)}" min="0" max="100" step="1"
+            id="pr-rate-${i}" onchange="updatePartnerRate(${i}, this.value)">
+          <span style="font-size:12px;color:var(--g600)">%</span>
+        </div>
+      </td>
+      <td class="right" style="font-weight:700;color:var(--blue)">
+        $${calcWholesale(sampleProduct.retail, pt.discountRate)}
+        <span style="font-size:10px;color:var(--g500);font-weight:400;margin-left:4px">/ ₩${sampleProduct.retail.toLocaleString()}</span>
+      </td>
+      <td class="center" style="font-size:11px;color:var(--g600)">2026-04-01</td>
+    </tr>
+  `).join('');
+}
+
+function updatePartnerRate(i, val) {
+  PARTNERS[i].discountRate = Math.max(0, Math.min(100, Number(val))) / 100;
+}
+
+function savePartnerRates() {
+  toast('✅ 파트너 할인율이 저장되었습니다. 파트너 포털 홀세일가에 즉시 반영됩니다');
+}
+
+function editExchangeRate() {
+  const newRate = prompt('새 환율을 입력하세요 (KRW/USD):', EXCHANGE_RATE.krwPerUsd);
+  if (newRate && !isNaN(newRate) && Number(newRate) > 0) {
+    EXCHANGE_RATE.krwPerUsd = Number(newRate);
+    document.getElementById('ex-rate-display').textContent = Number(newRate).toLocaleString();
+    renderPartners();
+    toast('✅ 환율이 업데이트되었습니다');
+  }
 }
 
 // ── INIT ──────────────────────────────────────────

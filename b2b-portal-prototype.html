@@ -123,6 +123,18 @@
     border-bottom: 1px solid #f0f0f0;
   }
   .product-card .img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-tag {
+    position: absolute; top: 8px; left: 8px;
+    background: #111; color: #FFC700;
+    font-size: 9px; font-weight: 800; padding: 3px 7px; letter-spacing: 0.8px;
+    pointer-events: none;
+  }
+  .ordering-closed-banner {
+    background: #1a1a1a; color: #FFC700; text-align: center;
+    padding: 10px 24px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .status-rejected { background: #ffecec; color: #750808; }
   .carry-over-tag {
     position: absolute; top: 10px; left: 10px;
     background: #111; color: #fff; font-size: 9px; padding: 2px 6px; letter-spacing: 1px;
@@ -461,7 +473,7 @@
         <div class="final-summary-value" id="final-price">$0</div>
       </div>
     </div>
-    <button class="btn-submit-order" onclick="submitOrder()">SUBMIT ORDER</button>
+    <button class="btn-submit-order" id="btn-submit-order" onclick="ordering_enabled ? submitOrder() : null">SUBMIT ORDER</button>
   </div>
 </div>
 
@@ -545,7 +557,7 @@ const PRODUCTS = [
     name: 'Hybrid Blazer', styleNo: '5755626', color: 'BLACK',
     material: 'POLYESTER 63%, RAYON 33%, SPANDEX 4%', category: 'MENS OUTER', origin: 'KR',
     priceUSD: 138, priceKRW: 209000, sampleSize: 'M', delivery: '2026-09-20',
-    carryOver: false,
+    carryOver: false, isHero: true,
     images: [
       `${CDN}/images/goods_img/20251120/5755626/5755626_17732136582306_500.jpg`,
       `${CDN}/images/prd_img/20251120/5755626/detail_5755626_17732136687844_500.jpg`,
@@ -559,7 +571,7 @@ const PRODUCTS = [
     name: 'Utility Trail Vest', styleNo: '5755363', color: 'BLACK',
     material: 'NYLON 100%', category: 'MENS OUTER', origin: 'KR',
     priceUSD: 52, priceKRW: 79900, sampleSize: 'M', delivery: '2026-09-20',
-    carryOver: false,
+    carryOver: false, isHero: false,
     images: [
       `${CDN}/images/goods_img/20251120/5755363/5755363_17742509480405_500.jpg`,
       `${CDN}/images/prd_img/20251120/5755363/detail_5755363_17742509542187_500.jpg`,
@@ -573,7 +585,7 @@ const PRODUCTS = [
     name: 'Slim Crew Neck T-Shirt', styleNo: '5915548', color: 'WHITE',
     material: 'COTTON 100%', category: 'UNISEX TOP', origin: 'KR',
     priceUSD: 18, priceKRW: 27900, sampleSize: 'M', delivery: '2026-08-15',
-    carryOver: true,
+    carryOver: true, isHero: false,
     images: [
       `${CDN}/images/goods_img/20260120/5915548/5915548_17732106584930_500.jpg`,
       `${CDN}/images/prd_img/20260120/5915548/detail_5915548_17732106757509_500.jpg`,
@@ -587,7 +599,7 @@ const PRODUCTS = [
     name: 'Harrington Jacket', styleNo: '3793566', color: 'BEIGE',
     material: 'COTTON 55%, POLYESTER 45%', category: 'UNISEX OUTER', origin: 'KR',
     priceUSD: 98, priceKRW: 149000, sampleSize: 'M', delivery: '2026-09-15',
-    carryOver: false,
+    carryOver: false, isHero: true,
     images: [
       `${CDN}/images/goods_img/20240112/3793566/3793566_17737142457357_500.jpg`,
       `${CDN}/images/prd_img/20240112/3793566/detail_3793566_17737142541358_500.jpg`,
@@ -601,7 +613,7 @@ const PRODUCTS = [
     name: 'Linen-Like Long Bermuda Denim Pants', styleNo: '5815485', color: 'LIGHT INDIGO',
     material: 'COTTON 99%, POLYURETHANE 1%', category: 'MENS BOTTOM', origin: 'KR',
     priceUSD: 62, priceKRW: 94900, sampleSize: 'M', delivery: '2026-09-01',
-    carryOver: false,
+    carryOver: false, isHero: false,
     images: [
       `${CDN}/images/goods_img/20251209/5815485/5815485_17748751724541_500.jpg`,
       `${CDN}/images/prd_img/20251209/5815485/detail_5815485_17748751788304_500.jpg`,
@@ -615,7 +627,7 @@ const PRODUCTS = [
     name: 'NP Belted Cargo Shorts', styleNo: '5755293', color: 'GREYISH BEIGE',
     material: 'NYLON 100%', category: 'MENS BOTTOM', origin: 'KR',
     priceUSD: 46, priceKRW: 69900, sampleSize: 'M', delivery: '2026-08-20',
-    carryOver: false,
+    carryOver: false, isHero: false,
     images: [
       `${CDN}/images/goods_img/20251120/5755293/5755293_17742362391216_500.jpg`,
       `${CDN}/images/prd_img/20251120/5755293/detail_5755293_17742425663096_500.jpg`,
@@ -629,7 +641,7 @@ const PRODUCTS = [
     name: 'Washed Poplin Short Sleeve Crop Shirt', styleNo: '5627632', color: 'SKY BLUE',
     material: 'COTTON 100%', category: 'WOMENS TOP', origin: 'KR',
     priceUSD: 23, priceKRW: 35900, sampleSize: 'S', delivery: '2026-08-15',
-    carryOver: false,
+    carryOver: false, isHero: false,
     images: [
       `${CDN}/images/goods_img/20251022/5627632/5627632_17750295247897_500.jpg`,
       `${CDN}/images/prd_img/20251022/5627632/detail_5627632_17750295316284_500.jpg`,
@@ -643,7 +655,7 @@ const PRODUCTS = [
     name: 'Balloon Denim Pants', styleNo: '5860706', color: 'SKY BLUE',
     material: 'COTTON 100%', category: 'UNISEX BOTTOM', origin: 'KR',
     priceUSD: 72, priceKRW: 109000, sampleSize: 'M', delivery: '2026-09-01',
-    carryOver: true,
+    carryOver: true, isHero: false,
     images: [
       `${CDN}/images/goods_img/20251230/5860706/5860706_17744254184070_500.jpg`,
       `${CDN}/images/prd_img/202604020807594539745227269cda54f6ed5f.jpg`,
@@ -657,6 +669,7 @@ const PRODUCTS = [
 // ── STATE ──
 let cart = {};
 let currentProductId = null;
+let ordering_enabled = true;   // Feature flag: 수주회 발주 on/off
 let orderHistory = [
   // Pre-seeded past orders for demo
   {
@@ -677,6 +690,16 @@ let orderHistory = [
     eta: '2025-11-20', shippedDate: '2025-11-08', poApprovedDate: '2025-09-12',
     items: [
       { name: 'Balloon Denim Pants', styleNo: '5860706', color: 'SKY BLUE', img: `${CDN}/images/goods_img/20251230/5860706/5860706_17744254184070_500.jpg`, sizes: {XS:40,S:80,M:100,L:60}, priceUSD: 72 },
+    ]
+  },
+  {
+    poNo: 'PO-2026-39104', date: '2026-04-13', season: 'FW26',
+    status: 'rejected', statusLabel: 'Rejected',
+    totalStyles: 1, totalQty: 15, totalUSD: 1335,
+    eta: '—', shippedDate: null, poApprovedDate: null,
+    rejectionReason: '요청 수량이 최소 발주 수량(20pcs) 미달입니다. 수량 확인 후 재주문 부탁드립니다.',
+    items: [
+      { name: 'Utility Trail Vest', styleNo: '5755363', color: 'BLACK', img: `${CDN}/images/goods_img/20251120/5755363/5755363_17742509480405_500.jpg`, sizes: {S:5,M:10}, priceUSD: 52 },
     ]
   }
 ];
@@ -723,6 +746,7 @@ function renderProductGrid() {
       <div class="product-card" onclick="openModal(${p.id})">
         <div class="img-wrap">
           <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
+          ${p.isHero ? '<span class="hero-tag">HERO</span>' : ''}
           ${p.carryOver ? '<span class="carry-over-tag">CARRY OVER</span>' : ''}
           ${inCart ? `<span class="in-cart-badge">IN CART</span>` : ''}
         </div>
@@ -781,7 +805,18 @@ function openModal(productId) {
     </div>`).join('');
 
   // Button label
-  document.getElementById('btn-add').textContent = cart[productId] ? 'UPDATE SELECTION' : 'ADD TO SELECTION';
+  const btnAdd = document.getElementById('btn-add');
+  if (!ordering_enabled) {
+    btnAdd.textContent = '수주회가 종료되었습니다';
+    btnAdd.disabled = true;
+    btnAdd.style.opacity = '0.45';
+    btnAdd.style.cursor = 'not-allowed';
+  } else {
+    btnAdd.textContent = cart[productId] ? 'UPDATE SELECTION' : 'ADD TO SELECTION';
+    btnAdd.disabled = false;
+    btnAdd.style.opacity = '';
+    btnAdd.style.cursor = '';
+  }
 
   updateModalTotals();
   document.getElementById('modal').classList.add('open');
@@ -902,6 +937,22 @@ function renderCart() {
 function goToConfirm() {
   renderConfirm();
   switchScreen('screen4');
+  const btn = document.getElementById('btn-submit-order');
+  if (!ordering_enabled) {
+    btn.textContent = '수주회가 종료되었습니다';
+    btn.disabled = true;
+    btn.style.opacity = '0.45';
+    btn.style.cursor = 'not-allowed';
+    btn.style.background = '#888';
+    btn.style.color = '#fff';
+  } else {
+    btn.textContent = 'SUBMIT ORDER';
+    btn.disabled = false;
+    btn.style.opacity = '';
+    btn.style.cursor = '';
+    btn.style.background = '';
+    btn.style.color = '';
+  }
 }
 
 function renderConfirm() {
@@ -1084,10 +1135,12 @@ function renderMyPage() {
       </div>`;
     }).join('');
 
+    const isRejected = order.status === 'rejected';
     const pillClass = {
       submitted: 'status-submitted', approved: 'status-approved',
       production: 'status-production', qc: 'status-qc',
-      shipped: 'status-shipped', delivered: 'status-delivered'
+      shipped: 'status-shipped', delivered: 'status-delivered',
+      rejected: 'status-rejected'
     }[order.status] || 'status-submitted';
 
     return `
@@ -1101,7 +1154,11 @@ function renderMyPage() {
           <span class="po-chevron" id="chevron-${idx}">▼</span>
         </div>
         <div class="po-detail" id="po-detail-${idx}">
-          <div class="po-progress">${stepsHtml}</div>
+          ${isRejected ? `
+          <div style="background:#ffecec;border:1px solid #ffcdc9;padding:14px 18px;margin-bottom:16px;border-radius:2px">
+            <div style="font-size:12px;font-weight:700;color:#750808;margin-bottom:6px">⚠ 주문이 반려되었습니다</div>
+            <div style="font-size:12px;color:#750808;line-height:1.7"><strong>반려 사유:</strong> ${order.rejectionReason || '—'}</div>
+          </div>` : `<div class="po-progress">${stepsHtml}</div>`}
           <div class="po-eta-row">
             <div class="po-eta-item">
               <div class="po-eta-label">Order Date</div>
